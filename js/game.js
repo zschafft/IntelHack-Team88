@@ -29,10 +29,30 @@ function create () {
     //Add position
     text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
         font: "20px Arial",
-        fill: "#ff0044",
-        align: "center"
+        fill: "blue",
     });
     text.anchor.setTo(0.5, 0.5);
+
+    var bmd = game.add.bitmapData(350, 300); 
+    var sp = game.add.sprite(this.game.world.centerX, 150, bmd);
+    sp.anchor.setTo(0.5, 0);
+    sp.inputEnabled = true;
+
+    var input = new CanvasInput({
+        canvas: bmd.canvas,  
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontColor: '#212121',
+        fontWeight: 'bold',
+        width: 300,
+        padding: 8,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 3,
+        boxShadow: '1px 1px 0px #fff',
+        innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+        placeHolder: 'Username', 
+    }); 
 
     game.camera.x = -200;
 }
