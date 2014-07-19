@@ -9,8 +9,8 @@ window.onload = function() {
 
 // Game Callbacks -----
 function preload () {
-    game.load.image('logo', 'phaser.png');
-    game.load.image('start','start_button.png');
+    game.load.image('logo', 'img/phaser.png');
+    game.load.image('start','img/start_button.png');
 }
 
 function create () {
