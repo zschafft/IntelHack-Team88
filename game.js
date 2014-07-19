@@ -2,7 +2,9 @@ var game;
 var GD = {};
 
 window.onload = function() {
-    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
+    													create: create,
+    													update: update });
 };
 
 // Game Callbacks -----
@@ -50,8 +52,8 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
-// 	//  split polynomial on [+-]
-// 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
+	//  split polynomial on [+-]
+	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
 // 	return function(x) {
 // 		var total = evalFactor(parts[0],x);
 // 		for(int i=1;i<total.size();i+=2) {
