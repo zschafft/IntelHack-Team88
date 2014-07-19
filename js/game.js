@@ -17,11 +17,8 @@ function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
 
-    game.world.setBounds(0,0,2000,2000);
-
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    GD.fun='';
     GD.running=false;
 
   	//Add button
@@ -29,17 +26,16 @@ function create () {
     button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    text = game.add.text('740', '550', '', {
+    GD.fun = game.add.text('740', '550', '', {
         font: "20px Arial",
         fill: "#ff0044",
         align: "center"
     });
-    text.anchor.setTo(0.5, 0.5);
 }
 
 function update() {
 	//update loop
-	text.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
 
