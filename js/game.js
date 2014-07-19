@@ -2,12 +2,15 @@ var game;
 var GD = {};
 
 window.onload = function() {
-    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
+    													create: create,
+    													update: update });
 };
 
 // Game Callbacks -----
 function preload () {
-    game.load.image('logo', 'phaser.png');
+    game.load.image('logo', 'img/phaser.png');
+    game.load.image('start','img/start_button.png');
 }
 
 function create () {
@@ -20,13 +23,33 @@ function create () {
     GD.fun='';
     GD.running=false;
 
+  	//Add button
+    button = game.add.button(x='600',y='550', key='start',callback=StartGame);
+    button.anchor.setTo(0.2, 0.5);
+
+    //Add position
+    text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
+        font: "20px Arial",
+        fill: "#ff0044",
+        align: "center"
+    });
+    text.anchor.setTo(0.5, 0.5);
+
     game.camera.x = -200;
 }
 
 function update() {
 	//update loop
+	text.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
+
+function StartGame(){
+
+	//Move Delorean
+  	alert("Cicked on button!");	
+
+}
 
 // Utils
 function makeColoredRect(key, width, height, r, g, b) {
@@ -51,6 +74,7 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
+
 // 	//  split polynomial on [+-]
 // 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
  	debugger;
@@ -65,6 +89,18 @@ function symToFn(string) {
  		}
 		return total;
 	}
+
+	//  split polynomial on [+-]
+	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
+// 	return function(x) {
+// 		var total = evalFactor(parts[0],x);
+// 		for(int i=1;i<total.size();i+=2) {
+// 			if (parts[i]) total+=evalFactor(parts[i+1],x);
+// 			else total-=evalFactor(parts[i+1],x);
+// 		}
+// 		return total;
+// 	}
+
 }
 
 function evalFactor(f,x) {
