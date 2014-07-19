@@ -28,7 +28,24 @@ function create () {
     GD.fun = game.add.text('740', '550', '', {font: "20px Arial",fill: "blue",});
     text.anchor.setTo(0.5, 0.5);
 
-    game.camera.x = -200;
+    var textBmD = game.make.bitmapData(350,50,'textbox',true);
+    var tbSprite = game.add.sprite(100,100,game.cache.getBitmapData('textbox'));
+    var inputBox = new CanvasInput({
+      canvas: textBmD.canvas,
+      fontSize: 18,
+      fontFamily: 'Arial',
+      fontColor: '#212121',
+      fontWeight: 'bold',
+      width: 300,
+      padding: 8,
+      borderWidth: 1,
+      borderColor: '#000',
+      borderRadius: 3,
+      boxShadow: '1px 1px 0px #fff',
+      innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+      placeHolder: 'Enter message here...'
+    });
+
 }
 
 function update() {
