@@ -13,6 +13,8 @@ function preload () {
     game.load.image('start','img/start_button.png');
 }
 
+
+
 function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
@@ -40,7 +42,7 @@ function create () {
 
 function update() {
 	//update loop
-	text.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
+	GD.fun.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
 
@@ -76,14 +78,13 @@ function makeRect(key, width, height) {
 function symToFn(string) {
 
 // 	//  split polynomial on [+-]
-// 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
- 	debugger;
- 	var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
+ 	var parts = string.match("([/d]*x/^[/d][+-])+|[/d]*");
  	var parts = string.replace("+", true);
  	var parts = string.replace("-", false);
+
  	return function(x) {
 		var total = evalFactor(parts[0],x);
- 		for(int i=1;i<total.size();i+=2) {
+ 		for(var i=1;i<total.size();i+=2) {
  			if (parts[i]) total+=evalFactor(parts[i+1],x);
 			else total-=evalFactor(parts[i+1],x);
  		}
@@ -117,5 +118,7 @@ function makeStarSprites(arr) {
 
 function loadJSON(filename) {
 	// load filename
-	// return JSON object
+    var JSONtext = $.getJSON(filename);
+	return  eval('(' + JSONtext + ')');
+    debugger;
 }
