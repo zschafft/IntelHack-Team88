@@ -27,7 +27,7 @@ function create () {
     button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
+    text = game.add.text('740', '550', '', {
         font: "20px Arial",
         fill: "#ff0044",
         align: "center"
@@ -39,7 +39,7 @@ function create () {
 
 function update() {
 	//update loop
-	text.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
+	text.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
 
