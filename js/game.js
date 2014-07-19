@@ -9,17 +9,15 @@ window.onload = function() {
 
 // Game Callbacks -----
 function preload () {
-    game.load.image('logo', 'img/phaser.png');
     game.load.image('start','img/start_button.png');
 }
 
 function create () {
-    // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-    // logo.anchor.setTo(0.5, 0.5);
+
+    var JSONarray = loadJSON();
 
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    GD.fun='';
     GD.running=false;
 
   	//Add button
@@ -27,39 +25,15 @@ function create () {
     button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
-        font: "20px Arial",
-        fill: "blue",
-    });
+    GD.fun = game.add.text('740', '550', '', {font: "20px Arial",fill: "blue",});
     text.anchor.setTo(0.5, 0.5);
-
-    var bmd = game.add.bitmapData(350, 300); 
-    var sp = game.add.sprite(this.game.world.centerX, 150, bmd);
-    sp.anchor.setTo(0.5, 0);
-    sp.inputEnabled = true;
-
-    var input = new CanvasInput({
-        canvas: bmd.canvas,  
-        fontSize: 18,
-        fontFamily: 'Arial',
-        fontColor: '#212121',
-        fontWeight: 'bold',
-        width: 300,
-        padding: 8,
-        borderWidth: 1,
-        borderColor: '#000',
-        borderRadius: 3,
-        boxShadow: '1px 1px 0px #fff',
-        innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-        placeHolder: 'Username', 
-    }); 
 
     game.camera.x = -200;
 }
 
 function update() {
 	//update loop
-	text.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
+	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
 
@@ -93,6 +67,22 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
+
+// 	//  split polynomial on [+-]
+// 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
+ // 	debugger;
+ // 	var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
+ // 	var parts = string.replace("+", true);
+ // 	var parts = string.replace("-", false);
+ // 	return function(x) {
+	// 	var total = evalFactor(parts[0],x);
+ // 		for(int i=1;i<total.size();i+=2) {
+ // 			if (parts[i]) total+=evalFactor(parts[i+1],x);
+	// 		else total-=evalFactor(parts[i+1],x);
+ // 		}
+	// 	return total;
+	// }
+
 	//  split polynomial on [+-]
 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
 // 	return function(x) {
@@ -103,10 +93,11 @@ function symToFn(string) {
 // 		}
 // 		return total;
 // 	}
+
 }
 
 function evalFactor(f,x) {
-// 	return f.c*Math.pow(x,f.e);
+ 	return f.c*Math.pow(x,f.e);
 }
 
 // where arr = [{x:100,y:100},{x:200,y:150}];
