@@ -17,6 +17,8 @@ function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
 
+    game.world.setBounds(0,0,2000,2000);
+
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
     GD.fun='';
@@ -33,8 +35,6 @@ function create () {
         align: "center"
     });
     text.anchor.setTo(0.5, 0.5);
-
-    game.camera.x = -200;
 }
 
 function update() {
