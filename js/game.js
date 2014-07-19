@@ -16,14 +16,12 @@ function preload () {
 
 
 function create () {
-    // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-    // logo.anchor.setTo(0.5, 0.5);
+    //make world bigger
+    game.world.setBounds(-1000,-1000,2000,2000);
 
-    var JSONarray = loadJSON();
-
-    makeRect('delorean',50,50);
-    GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    GD.running=false;
+    // Make hud group
+    GD.hud = game.add.group();
+    game.camera.follow(GD.hud);
 
     //add stars
     makeRect('star', 25, 25);
@@ -33,33 +31,26 @@ function create () {
     makeStarSprites(testArray);
 
   	//Add button
-    button = game.add.button(x='600',y='550', key='start',callback=StartGame);
-    button.anchor.setTo(0.2, 0.5);
+    var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
+    // button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    GD.fun = game.add.text('740', '550', '', {
+    GD.fun = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
         font: "20px Arial",
         fill: "#ff0044",
         align: "center"
     });
 
-    var textBmD = game.make.bitmapData(350,50,'textbox',true);
-    var tbSprite = game.add.sprite(100,100,game.cache.getBitmapData('textbox'));
-    var inputBox = new CanvasInput({
-      canvas: textBmD.canvas,
-      fontSize: 18,
-      fontFamily: 'Arial',
-      fontColor: '#212121',
-      fontWeight: 'bold',
-      width: 300,
-      padding: 8,
-      borderWidth: 1,
-      borderColor: '#000',
-      borderRadius: 3,
-      boxShadow: '1px 1px 0px #fff',
-      innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-      placeHolder: 'Enter message here...'
-    });
+    GD.hud.add(button);
+    GD.hud.add(GD.fun);
+
+    GD.hud.x=(game.width-100)/2;
+    GD.hud.x=(game.height-100)/2;
+
+    //Delorean
+    makeRect('delorean',50,50);
+    GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
+    GD.running=false;
 }
 
 function update() {
