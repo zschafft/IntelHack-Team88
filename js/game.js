@@ -21,30 +21,12 @@ function create () {
     GD.running=false;
 
   	//Add button
-    button = game.add.button(x='600',y='550', key='start',callback=StartGame);
+    button = game.add.button(x='580',y='550', key='start',callback=StartGame);
     button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    GD.fun = game.add.text('740', '550', '', {font: "20px Arial",fill: "blue",});
-    text.anchor.setTo(0.5, 0.5);
-
-    var textBmD = game.make.bitmapData(350,50,'textbox',true);
-    var tbSprite = game.add.sprite(100,100,game.cache.getBitmapData('textbox'));
-    var inputBox = new CanvasInput({
-      canvas: textBmD.canvas,
-      fontSize: 18,
-      fontFamily: 'Arial',
-      fontColor: '#212121',
-      fontWeight: 'bold',
-      width: 300,
-      padding: 8,
-      borderWidth: 1,
-      borderColor: '#000',
-      borderRadius: 3,
-      boxShadow: '1px 1px 0px #fff',
-      innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-      placeHolder: 'Enter message here...'
-    });
+    GD.fun = game.add.text('730', '550', '', {font: "20px Arial",fill: "blue",});
+    GD.fun.anchor.setTo(0.5, 0.5);
 
 }
 
@@ -56,9 +38,15 @@ function update() {
 
 function StartGame(){
 
-	//Move Delorean
-  	alert("Cicked on button!");	
+	//Grab text
+    textBox();
 
+  	alert("Cicked on button!");
+
+}
+
+function textBox() {
+    return document.getElementById('inputbox').value
 }
 
 // Utils
