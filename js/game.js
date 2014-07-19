@@ -21,13 +21,6 @@ function create () {
     GD.hud = game.add.group();
     game.camera.follow(GD.hud);
 
-    //add stars
-    makeRect('star', 25, 25);
-    stars = game.add.group();
-    //test array will be replaced with results from JSON
-    var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
-    makeStarSprites(testArray);
-
   	//Add button
     var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
     // button.anchor.setTo(0.2, 0.5);
@@ -49,13 +42,19 @@ function create () {
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
     GD.running=false;
+
+    //Stars
+    makeRect('star', 25, 25);
+    stars = game.add.group();
+    
+    //test array will be replaced with results from JSON
+    var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
+    makeStarSprites(testArray);
 }
 
 function update(tpf) {
 	//update loop
-
 	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-
 }
 //----------
 
@@ -136,7 +135,6 @@ function evalFactor(f,x) {
 // where arr = [{x:100,y:100},{x:200,y:150}];
 
 function makeStarSprites(arr) {
-
 	 for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, game.cache.getBitmapData('star'));
 	}
