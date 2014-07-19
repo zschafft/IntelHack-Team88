@@ -16,12 +16,11 @@ function preload () {
 function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
-    
-    var JSONarray = loadJSON()
+
+    var JSONarray = loadJSON();
 
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    GD.fun='';
     GD.running=false;
 
   	//Add button
@@ -75,18 +74,18 @@ function symToFn(string) {
 
 // 	//  split polynomial on [+-]
 // 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
- 	debugger;
- 	var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
- 	var parts = string.replace("+", true);
- 	var parts = string.replace("-", false);
- 	return function(x) {
-		var total = evalFactor(parts[0],x);
- 		for(int i=1;i<total.size();i+=2) {
- 			if (parts[i]) total+=evalFactor(parts[i+1],x);
-			else total-=evalFactor(parts[i+1],x);
- 		}
-		return total;
-	}
+ // 	debugger;
+ // 	var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
+ // 	var parts = string.replace("+", true);
+ // 	var parts = string.replace("-", false);
+ // 	return function(x) {
+	// 	var total = evalFactor(parts[0],x);
+ // 		for(int i=1;i<total.size();i+=2) {
+ // 			if (parts[i]) total+=evalFactor(parts[i+1],x);
+	// 		else total-=evalFactor(parts[i+1],x);
+ // 		}
+	// 	return total;
+	// }
 
 	//  split polynomial on [+-]
 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
