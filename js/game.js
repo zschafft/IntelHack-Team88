@@ -25,6 +25,13 @@ function create () {
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
     GD.running=false;
 
+    //add stars
+    makeRect('star', 25, 25);
+    stars = game.add.group();
+    //test array will be replaced with results from JSON
+    var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
+    makeStarSprites(testArray);
+
   	//Add button
     button = game.add.button(x='600',y='550', key='start',callback=StartGame);
     button.anchor.setTo(0.2, 0.5);
@@ -140,9 +147,10 @@ function evalFactor(f,x) {
 // where arr = [{x:100,y:100},{x:200,y:150}];
 
 function makeStarSprites(arr) {
-	// for(int i=0;i<arr.size();i++) {
-	// 	GD.stars.add(game.add.sprite('star',arr[i].x,arr[i].y))
-	// }
+
+	 for (var i = 0; i < arr.length; i++) {
+        var star = stars.create(arr[i].x, arr[i].y, game.cache.getBitmapData('star'));
+	}
 }
 
 function loadJSON(filename) {
