@@ -10,6 +10,7 @@ window.onload = function() {
 // Game Callbacks -----
 function preload () {
     game.load.image('logo', 'phaser.png');
+    game.load.image('start','start_button.png');
 }
 
 function create () {
@@ -21,13 +22,33 @@ function create () {
     GD.fun='';
     GD.running=false;
 
+  	//Add button
+    button = game.add.button(x='600',y='550', key='start',callback=StartGame);
+    button.anchor.setTo(0.2, 0.5);
+
+    //Add position
+    text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
+        font: "20px Arial",
+        fill: "#ff0044",
+        align: "center"
+    });
+    text.anchor.setTo(0.5, 0.5);
+
     game.camera.x = -200;
 }
 
 function update() {
 	//update loop
+	text.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
+
+function StartGame(){
+
+	//Move Delorean
+  	alert("Cicked on button!");	
+
+}
 
 // Utils
 function makeColoredRect(key, width, height, r, g, b) {
