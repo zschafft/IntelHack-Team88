@@ -13,8 +13,6 @@ function preload () {
     game.load.image('start','img/start_button.png');
 }
 
-
-
 function create () {
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
@@ -46,7 +44,7 @@ function create () {
     GD.running=false;
 }
 
-function update() {
+function update(tpf) {
 	//update loop
 
 	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
@@ -85,7 +83,7 @@ function makeRect(key, width, height) {
 
 function symToFn(string) {
 
-// 	//  split polynomial on [+-]
+ 	//  split polynomial on [+-]
  	var parts = string.match("([/d]*x/^[/d][+-])+|[/d]*");
  	var parts = string.replace("+", true);
  	var parts = string.replace("-", false);
