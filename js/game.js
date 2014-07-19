@@ -18,10 +18,11 @@ function preload () {
 function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
+    
+    var JSONarray = loadJSON()
 
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    var JSONarray = loadJSON()
     GD.fun='';
     GD.running=false;
 
@@ -30,19 +31,18 @@ function create () {
     button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    text = game.add.text('740', '550', "(x,y) = (" + GD.player.x + "," + GD.player.y + ")", {
+    GD.fun = game.add.text('740', '550', '', {
         font: "20px Arial",
         fill: "#ff0044",
         align: "center"
     });
-    text.anchor.setTo(0.5, 0.5);
-
-    game.camera.x = -200;
 }
 
 function update() {
 	//update loop
-	GD.fun.setText("(x,y) = (" + GD.player.x + "," + GD.player.y + ")");
+
+	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+
 }
 //----------
 
@@ -118,7 +118,7 @@ function makeStarSprites(arr) {
 
 function loadJSON(filename) {
 	// load filename
-    var JSONtext = $.getJSON(filename);
+   // var JSONtext = $.getJSON(filename);
 	return  eval('(' + JSONtext + ')');
     debugger;
 }
