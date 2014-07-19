@@ -18,12 +18,11 @@ function preload () {
 function create () {
     // var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     // logo.anchor.setTo(0.5, 0.5);
-    
-    var JSONarray = loadJSON()
+
+    var JSONarray = loadJSON();
 
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
-    GD.fun='';
     GD.running=false;
 
   	//Add button
@@ -90,6 +89,20 @@ function symToFn(string) {
  		}
 		return total;
 	}
+}
+
+function testRegex(string) {
+    //var regex = new RegExp("([/d]*x/^[/d][+-])+|[/d]*)");
+    
+    var regex = new RegExp("[0-9]*x");
+    var parts = regex.exec(string);
+    //var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
+    //var parts = .replace("+", "plus");
+   // var parts = string.replace("+", true);
+   // var parts = string.replace("-", false);
+    //var parts = string;
+    return parts;
+}
 
 	//  split polynomial on [+-]
 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
@@ -101,8 +114,6 @@ function symToFn(string) {
 // 		}
 // 		return total;
 // 	}
-
-}
 
 function evalFactor(f,x) {
  	return f.c*Math.pow(x,f.e);
@@ -119,6 +130,6 @@ function makeStarSprites(arr) {
 function loadJSON(filename) {
 	// load filename
    // var JSONtext = $.getJSON(filename);
-	return  eval('(' + JSONtext + ')');
-    debugger;
+	// return  eval('(' + JSONtext + ')');
+ //    debugger;
 }
