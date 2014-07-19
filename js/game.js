@@ -13,6 +13,8 @@ function preload () {
     game.load.image('start','img/start_button.png');
 }
 
+
+
 function create () {
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
@@ -46,7 +48,9 @@ function create () {
 
 function update() {
 	//update loop
+
 	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+
 }
 //----------
 
@@ -82,19 +86,32 @@ function makeRect(key, width, height) {
 function symToFn(string) {
 
 // 	//  split polynomial on [+-]
-// 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
- // 	debugger;
- // 	var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
- // 	var parts = string.replace("+", true);
- // 	var parts = string.replace("-", false);
- // 	return function(x) {
-	// 	var total = evalFactor(parts[0],x);
- // 		for(int i=1;i<total.size();i+=2) {
- // 			if (parts[i]) total+=evalFactor(parts[i+1],x);
-	// 		else total-=evalFactor(parts[i+1],x);
- // 		}
-	// 	return total;
-	// }
+ 	var parts = string.match("([/d]*x/^[/d][+-])+|[/d]*");
+ 	var parts = string.replace("+", true);
+ 	var parts = string.replace("-", false);
+
+ 	return function(x) {
+		var total = evalFactor(parts[0],x);
+ 		for(var i=1;i<total.size();i+=2) {
+ 			if (parts[i]) total+=evalFactor(parts[i+1],x);
+			else total-=evalFactor(parts[i+1],x);
+ 		}
+		return total;
+	}
+}
+
+function testRegex(string) {
+    //var regex = new RegExp("([/d]*x/^[/d][+-])+|[/d]*)");
+    
+    var regex = new RegExp("[0-9]*x");
+    var parts = regex.exec(string);
+    //var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
+    //var parts = .replace("+", "plus");
+   // var parts = string.replace("+", true);
+   // var parts = string.replace("-", false);
+    //var parts = string;
+    return parts;
+}
 
 	//  split polynomial on [+-]
 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
@@ -106,8 +123,6 @@ function symToFn(string) {
 // 		}
 // 		return total;
 // 	}
-
-}
 
 function evalFactor(f,x) {
  	return f.c*Math.pow(x,f.e);
@@ -123,5 +138,7 @@ function makeStarSprites(arr) {
 
 function loadJSON(filename) {
 	// load filename
-	// return JSON object
+   // var JSONtext = $.getJSON(filename);
+	// return  eval('(' + JSONtext + ')');
+ //    debugger;
 }
