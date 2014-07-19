@@ -13,12 +13,12 @@ function preload () {
 }
 
 function create () {
+    game.stage.backgroundColor = 0x000053
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
 
     // Make hud group
     GD.hud = game.add.group();
-    game.camera.follow(GD.hud);
 
   	//Add button
     var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
@@ -36,6 +36,8 @@ function create () {
 
     GD.hud.x=(game.width-100)/2;
     GD.hud.x=(game.height-100)/2;
+
+    game.camera.follow(GD.hud);
 
     //Delorean
     makeRect('delorean',50,50);
@@ -58,12 +60,8 @@ function update(tpf) {
 //----------
 
 function StartGame(){
-
 	//Grab text
-    textBox();
-
-  	alert("Cicked on button!");
-
+  	alert(textBox());
 }
 
 function textBox() {
