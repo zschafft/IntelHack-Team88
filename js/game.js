@@ -9,7 +9,6 @@ window.onload = function() {
 
 // Game Callbacks -----
 function preload () {
-    game.load.image('logo', 'img/phaser.png');
     game.load.image('start','img/start_button.png');
 }
 
@@ -60,9 +59,15 @@ function update(tpf) {
 
 function StartGame(){
 
-	//Move Delorean
-  	alert("Cicked on button!");	
+	//Grab text
+    textBox();
 
+  	alert("Cicked on button!");
+
+}
+
+function textBox() {
+    return document.getElementById('inputbox').value
 }
 
 // Utils
