@@ -18,6 +18,8 @@ function create () {
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
     GD.fun='';
     GD.running=false;
+
+    game.camera.x = -200;
 }
 
 function update() {
@@ -40,6 +42,7 @@ function makeRect(key, width, height) {
 
 //Parsing Functions
 
+// ex:
 // s = textbox.getText();
 // f = symToFn(s);
 // for(int x=0;x<canvas.width;x++) {
@@ -47,18 +50,31 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
-	//  split polynomial on [+-]
-	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
-	return function(x) {
-		var total = evalFactor(parts[0],x);
-		for(int i=1;i<total.size();i+=2) {
-			if (parts[i]) total+=evalFactor(parts[i+1],x);
-			else total-=evalFactor(parts[i+1],x);
-		}
-		return total;
-	}
+// 	//  split polynomial on [+-]
+// 	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
+// 	return function(x) {
+// 		var total = evalFactor(parts[0],x);
+// 		for(int i=1;i<total.size();i+=2) {
+// 			if (parts[i]) total+=evalFactor(parts[i+1],x);
+// 			else total-=evalFactor(parts[i+1],x);
+// 		}
+// 		return total;
+// 	}
 }
 
 function evalFactor(f,x) {
-	return f.c*Math.pow(x,f.e);
+// 	return f.c*Math.pow(x,f.e);
+}
+
+// where arr = [{x:100,y:100},{x:200,y:150}];
+
+function makeStarSprites(arr) {
+	// for(int i=0;i<arr.size();i++) {
+	// 	GD.stars.add(game.add.sprite('star',arr[i].x,arr[i].y))
+	// }
+}
+
+function loadJSON(filename) {
+	// load filename
+	// return JSON object
 }
