@@ -115,12 +115,6 @@ function update() {
 
     if (GD.running)
     {
-        if (starsCollected)
-        {
-            GD.running = false;
-            alert("Level Complete");
-        }
-
         if (GD.player.x/20 == game.width/20 - 5 || GD.player.y/20 == game.height/20 - 20)
         {
             GD.running = false;
@@ -128,6 +122,12 @@ function update() {
         }
         GD.player.x += 1;
         GD.player.y = -20*GD.fun(GD.player.x/20);
+    }
+
+    if (starsCollected)
+    {
+        GD.running = false;
+        alert("Level Complete");
     }
 
 
@@ -138,6 +138,7 @@ function update() {
     })
 
 	GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
+    
     redrawPlot(GD.fun,GD.curveBuff);
 }
 
@@ -272,7 +273,6 @@ function draw(fn,canvas) {
     axes.scale = 20;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
-    //showAxes(ctx,axes);
     funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
 }
 
@@ -291,17 +291,6 @@ function funGraph (ctx,axes,func,color,thick) {
     }
     ctx.stroke();
 }
-
-// function showAxes(ctx,axes) {
-//     var x0=axes.x0, w=ctx.canvas.width;
-//     var y0=axes.y0, h=ctx.canvas.height;
-//     var xmin = axes.doNegativeX ? 0 : x0;
-//     ctx.beginPath();
-//     ctx.strokeStyle = "rgb(128,128,128)"; 
-//     ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
-//     ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
-//     ctx.stroke();
-// }
 
 function NamedRegExp(pattern, string) {
     pattern=pattern.toString();
