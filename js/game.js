@@ -77,14 +77,14 @@ function create () {
 function update() {
 	//update loop
 
-	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
     if (cursors.up.isDown)
     {
-        GD.player.y = GD.player.y - 10;
+        GD.player.y = GD.player.y + 10;
     }
     if(cursors.down.isDown)
     {
-        GD.player.y = GD.player.y + 10;
+        GD.player.y = GD.player.y - 10;
     }
     if(cursors.left.isDown)
     {
