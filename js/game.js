@@ -242,10 +242,6 @@ function makeStarSprites(arr) {
 
 function loadlevel(lvl)
 {
-    backAudio.pause();
-    levelupsound.volume = 2;
-    levelupsound.play();
-    backAudio.play();
     if(lvl==12) debugger;
     var starArr = GD.ld['level'+lvl];
     if(starArr == null) return false; //no level data
