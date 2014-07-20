@@ -49,11 +49,7 @@ function create () {
 
     GD.player.bringToTop();
 
-    GD.watch('playerX',updatePositionText);
-    GD.watch('playerY',updatePositionText);
-    GD.watch('score',updateScoreText);
-    GD.watch('totalscore',updateTotScoreText);
-    GD.watch('level',updateLevelText);
+    initWatches();
 }
 
 function update() {
@@ -98,6 +94,19 @@ function update() {
 //----------
 
 // Init helpers
+function initWatches() {
+    GD.watch('playerX',updatePositionText);
+    GD.watch('playerY',updatePositionText);
+    GD.watch('score',updateScoreText);
+    GD.watch('totalscore',updateTotScoreText);
+    GD.watch('level',updateLevelText);
+
+    GD.playerX = 0;
+    GD.playerY = 0;
+    GD.score = 0;
+    GD.totalscore = 0;
+    GD.level = 1;
+}
 
 function initLevelData() {
     GD.stars = game.add.group();
@@ -121,7 +130,7 @@ function initHUD() {
     GD.startBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=startTravel);
  
     //Add HUD
-    GD.posText = game.add.text((game.width-600)/2, (game.width-300)/2, '', {
+    GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -240,7 +249,6 @@ function startTravel(){
     GD.redraw = true;
     GD.isRunning = true;
 }
-
 
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
