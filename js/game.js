@@ -23,7 +23,7 @@ function preload () {
     game.load.image('startBut', 'img/start_button.png');
     game.load.image('stop', 'img/reset_button.png');
     game.load.image('star', 'img/star.png');
-    game.load.image('delorean', 'img/smalldelorean.png');
+    game.load.spritesheet('delorean', 'img/delorSheet.png',135,52,2);
     game.load.image('resetBut', 'img/reset_button.png');
     game.load.image('background', 'img/lotsofstars.jpg');
     game.load.audio('space', 'sounds/World-of-Automatons.mp3');
@@ -259,6 +259,8 @@ function startTravel(){
     GD.fun = symToFn(textBox());
     GD.redraw = true;
     GD.isRunning = true;
+    GD.player.animations.add('delorean');
+    GD.player.play('delorean', 10, true);
 }
 
 function checkForWin() {
@@ -287,6 +289,7 @@ function resetLevel() {
     GD.totalscore -= GD.score;
     GD.score = 0;
     GD.curveBuff.clear();
+    GD.player.animations.add('delorean');
 }
 
 function gameOver() {
