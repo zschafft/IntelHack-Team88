@@ -21,12 +21,12 @@ function preload () {
     game.load.image('startBut', 'img/start_button.png');
     game.load.image('stop', 'img/reset_button.png');
     game.load.image('star', 'img/star.png');
-    game.load.image('delorean', 'img/delorean.png');
+    game.load.image('delorean', 'img/smalldelorean.png');
     game.load.image('resetBut', 'img/reset_button.png');
 }
 
 function create () {
-    game.stage.backgroundColor = 0x000053
+    game.stage.backgroundColor = makeRandomColor();
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
 
@@ -42,19 +42,22 @@ function create () {
 
     initHUD();
 
-    // watch(GD.player,'x',updatePositionText);
-    // watch(GD.player,'y',updatePositionText);
     GD.watch('playerX',updatePositionText);
     GD.watch('playerY',updatePositionText);
     GD.watch('score',updateScoreText);
+    GD.watch('totalscore',updateTotScoreText);
+    GD.watch('level',updateLevelText);
 }
 
 function update() {
 	// update delorean position
     if (GD.isRunning)
     {   
+        var oldX = GD.player.x;
+        var oldY = GD.player.y;
         GD.playerX += GD.speed * GD.deltaCap;
         GD.playerY =  -GD.fun(GD.playerX);
+        GD.player.angle = 100*(game.math.angleBetween(oldX, oldY, GD.player.x, GD.player.y)) * .58;
     }
 
     // if we need to redraw, do it
@@ -71,7 +74,7 @@ function update() {
 
     // out of bounds check
     if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 ||
+        GD.player.y <= -game.height/2 || 
         GD.player.y >=  game.height/2) 
     {
         resetLevel();
@@ -151,7 +154,17 @@ function updatePositionText(id,oldval,newval) {
 }
 
 function updateScoreText(id,oldval,newval) {
-    GD.scoreText.setText("Score: "+GD.score);
+    GD.scoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateTotScoreText(id,oldval,newval) {
+    GD.totalscoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateLevelText(id,oldval,newval) {
+    GD.levelText.setText("Level: "+newval);
     return newval;
 }
 
@@ -207,6 +220,11 @@ function makeRect(key, width, height) {
 	var b = game.rnd.between(0,255);
 	var g = game.rnd.between(0,255);
 	return makeColoredRect(key, width, height, r,g,b);
+}
+
+function makeRandomColor() {
+    console.log(Phaser.Color.getRandomColor(0, 255));
+    return Phaser.Color.getRandomColor(0, 75);
 }
 
 //Parsing Functions
@@ -335,10 +353,8 @@ function gameOver() {
 }
 
 function resetLevel() {
-    debugger;
     GD.isRunning = false;
     GD.playerX = 0;
     GD.playerY = 0;
     GD.stars.callAllExists('revive',false);
-    GD.curveBuff.clear();
 }
