@@ -247,7 +247,24 @@ function collectStar(player, star) {
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
-        
+        if(stars.countLiving()==0)
+        {
+
+            GD.scoreText.setText("All stars collected!");
+            GD.starsCollected = true;
+            GD.score = 0;
+            console.log(GD.starsCollected);
+            GD.level = GD.level + 1;
+            startLevel(GD.level);
+            GD.player.destroy();
+            GD.player=game.add.sprite(0,0,'delorean');
+            GD.player.anchor.setTo(0.5,0.5);
+
+            GD.running=false;
+
+            return;
+        }
+
         GD.scoreText.setText("Score: " + GD.score);
         GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
@@ -360,6 +377,11 @@ function gameOver() {
 
 function reset() {
     startLevel(GD.level);
+    GD.totalscore = GD.level * 5;
+    GD.totalscoreText.setText("Score: " + GD.totalscore);
+    GD.player.destroy();
+    GD.player=game.add.sprite(0,0,'delorean');
+    GD.player.anchor.setTo(0.5,0.5);
     GD.running = false;
     GD.curveBuff.clear();
 }
