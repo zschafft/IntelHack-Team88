@@ -27,14 +27,14 @@ function create () {
     // button.anchor.setTo(0.2, 0.5);
 
     //Add position
-    GD.fun = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
+    GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
         font: "20px Arial",
         fill: "#ff0044",
         align: "center"
     });
 
     GD.hud.add(button);
-    GD.hud.add(GD.fun);
+    GD.hud.add(GD.posText);
 
     GD.hud.x=(game.width-100)/2;
     GD.hud.x=(game.height-100)/2;
@@ -56,11 +56,15 @@ function create () {
 
     //Add axis
 
+
+    // vars for drawing func
+    GD.pix = game.context.createImageData(1,1); // only do this once per page
+    GD._pix  = GD.pix.data;                           // only do this once per page
 }
 
 function update(tpf) {
 	//update loop
-	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
 }
 //----------
 
@@ -162,6 +166,12 @@ function makeAxis() {
     // make y axis
 }
 
-function redrawPlot() {
-
+function redrawPlot(fn,bmd) {
+    GD._pix[0] = 0;
+    GD._pix[1] = 0;
+    GD._pix[2] = 0;
+    GD._pix[3] = 0;
+    for(var x=0;x<bmd.width;x++) {
+        myContext.putImageData(GD.pix, x, fn(x));   
+    }
 }
