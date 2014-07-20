@@ -8,7 +8,8 @@ var GD = {
     isRunning:false,
     speed:100,
     playerX:0,playerY:0,
-    scale:20
+    scale:20,
+    needReset:false
 };
 
 window.onload = function() {
@@ -32,9 +33,11 @@ function create () {
     game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
-    backAudio = game.add.audio('space');
-    backAudio.play("",0,1,true,true);
 
+    GD.cameraX=((game.width-300)/2);
+    GD.cameraY=0;
+
+    initAudio();
     initAxes();
     initCurve();
     initLevelData();
@@ -48,14 +51,17 @@ function create () {
 
     initHUD();
 
-    GD.watch('playerX',updatePositionText);
-    GD.watch('playerY',updatePositionText);
-    GD.watch('score',updateScoreText);
-    GD.watch('totalscore',updateTotScoreText);
-    GD.watch('level',updateLevelText);
+    GD.player.bringToTop();
+
+    initWatches();
 }
 
 function update() {
+    if(GD.needReset) {
+        resetLevel();
+        GD.needReset = false;
+    }
+
 	// update delorean position
     if (GD.isRunning)
     {
@@ -93,6 +99,24 @@ function update() {
 //----------
 
 // Init helpers
+function initAudio() {
+    backAudio = game.add.audio('space');
+    backAudio.play("",0,1,true,true);
+}
+
+function initWatches() {
+    GD.watch('playerX',updatePositionText);
+    GD.watch('playerY',updatePositionText);
+    GD.watch('score',updateScoreText);
+    GD.watch('totalscore',updateTotScoreText);
+    GD.watch('level',updateLevelText);
+
+    GD.playerX = 0;
+    GD.playerY = 0;
+    GD.score = 0;
+    GD.totalscore = 0;
+    GD.level = 1;
+}
 
 function initLevelData() {
     GD.stars = game.add.group();
@@ -101,7 +125,8 @@ function initLevelData() {
 
 function initCurve() {
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite.anchor.setTo(0.5,0.5);
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = false;
 }
@@ -111,11 +136,11 @@ function initHUD() {
     GD.hud = game.add.group();
 
     // Add buttons
-    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=resetLevel);
+    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=function(){GD.needReset = true;});
     GD.startBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=startTravel);
  
     //Add HUD
-    GD.posText = game.add.text((game.width-600)/2, (game.width-300)/2, '', {
+    GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -149,9 +174,10 @@ function initHUD() {
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
     GD.hud.add(GD.totalscoreText);
+    GD.hud.add(GD.curveSprite);
 
-    GD.hud.x=(game.width-100)/2;
-    GD.hud.x=(game.height-100)/2;
+    GD.hud.x=GD.cameraX;
+    GD.hud.y=GD.cameraY;
 
     game.camera.follow(GD.hud);
 }
@@ -208,7 +234,7 @@ function loadlevel(lvl)
 function updatePositionText(id,oldval,newval) {
     if(id=='playerX')GD.player.x = newval;
     if(id=='playerY')GD.player.y = newval;
-    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
+    GD.posText.setText("Position: (" + Math.floor(GD.player.x/GD.scale) + "," + -Math.ceil(GD.player.y/GD.scale) + ")");
     return newval;
 }
 
@@ -218,7 +244,7 @@ function updateScoreText(id,oldval,newval) {
 }
 
 function updateTotScoreText(id,oldval,newval) {
-    GD.totalscoreText.setText("Score: "+newval);
+    GD.totalscoreText.setText("Total Score: "+newval);
     return newval;
 }
 
@@ -234,7 +260,6 @@ function startTravel(){
     GD.redraw = true;
     GD.isRunning = true;
 }
-
 
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
@@ -259,6 +284,7 @@ function resetLevel() {
     GD.playerY = 0;
     GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
+    GD.curveBuff.clear();
 }
 
 function gameOver() {
@@ -305,15 +331,14 @@ function loadJSON(file) {
     return res;
 }
 
-
 // Graphing
 function drawPlot(fn,bmd) {
     bmd.clear();
     var canvas = bmd.canvas;
 
     var axes={}, ctx=canvas.getContext("2d");
-    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
