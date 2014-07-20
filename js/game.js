@@ -43,6 +43,7 @@ function create () {
     //Delorean
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
+    testSprite = game.add.sprite(100, 100, makeRect('test', 25, 25));
     GD.running=false;
 
     //Stars
@@ -50,8 +51,9 @@ function create () {
     stars = game.add.group();
     jsonText = loadJSON('json/levels.json');
     //test array will be replaced with results from JSON
-    console.log(jsonText["level1"]);
     makeStarSprites(jsonText["level1"]);
+
+    cursors = game.input.keyboard.createCursorKeys();
 
     //Add axis
 
@@ -60,7 +62,48 @@ function create () {
 function update(tpf) {
 	//update loop
 	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+    if (cursors.up.isDown)
+    {
+        GD.player.y = GD.player.y - 10;
+    }
+    if(cursors.down.isDown)
+    {
+        GD.player.y = GD.player.y + 10;
+    }
+    if(cursors.left.isDown)
+    {
+        GD.player.x = GD.player.x - 10;
+    }
+    if(cursors.right.isDown)
+    {
+        GD.player.x = GD.player.x + 10;
+    }
+    stars.forEach(function(star) {
+
+        if(collides(GD.player, star))
+            
+            {
+        console.log('collision!');
+            }   
+    })
 }
+
+
+
+function collides (a, b) 
+    {
+       
+        if(a != undefined)
+        {
+            return !(
+                ((a.y + a.height) < (b.y)) ||
+                (a.y > (b.y + b.height)) ||
+                ((a.x + a.width) < b.x) ||
+                (a.x > (b.x + b.width))
+            );  
+        }
+}  
+  
 //----------
 
 function StartGame(){
