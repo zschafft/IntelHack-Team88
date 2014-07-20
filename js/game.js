@@ -1,4 +1,5 @@
 var game;
+var score = 0;
 var GD = {};
 
 window.onload = function() {
@@ -10,6 +11,7 @@ window.onload = function() {
 // Game Callbacks -----
 function preload () {
     game.load.image('start','img/start_button.png');
+    game.load.image('star', 'img/star.png');
 }
 
 function create () {
@@ -48,15 +50,12 @@ function create () {
     GD.running=false;
 
     //Stars
-    makeRect('star', 25, 25);
     stars = game.add.group();
-    GD.ld = loadJSON('json/levels.json');
-    //test array will be replaced with results from JSON
+    jsonText = loadJSON('json/levels.json');
+    makeStarSprites(jsonText["level1"]);
 
+    //add cursors
     cursors = game.input.keyboard.createCursorKeys();
-
-    //Add axis
-    makeStarSprites(GD.ld["level1"]);
 
     //Create Axis
     makeAxes();
@@ -96,7 +95,7 @@ function update() {
         if(collides(GD.player, star))
             
             {
-        console.log('collision!');
+            collectStar(GD.player, star);
             }   
     })
 
@@ -206,7 +205,8 @@ function evalFactor(f,x) {
 
 function makeStarSprites(arr) {
 	 for (var i = 0; i < arr.length; i++) {
-        var star = stars.create(arr[i].x, arr[i].y, game.cache.getBitmapData('star'));
+        var star = stars.create(arr[i].x, arr[i].y, 'star');
+       // star.events.onKilled.add(function() { score += 10; console.log(score);}, this);
 	}
 }
 
@@ -305,3 +305,12 @@ function NamedRegExp(pattern, string) {
     }
     return output;
 };
+
+function collectStar(player, star) {
+    if(star.alive == true)
+    {
+        star.kill();
+        score += 1;
+        console.log(score);
+    }
+}
