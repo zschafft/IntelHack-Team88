@@ -1,9 +1,16 @@
 var game;
+
 var GD = {
     level:1,
     score:0,
-    starsCollected:false
+    starsCollected:false,
+    deltaCap:1/60
 };
+
+var score = 0;
+
+var starsCollected = false;
+
 
 window.onload = function() {
     game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
@@ -19,6 +26,7 @@ function preload () {
 
 function create () {
     game.stage.backgroundColor = 0x000053
+    game.time.deltaCap=GD.deltaCap;
 
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
@@ -91,23 +99,24 @@ function create () {
     //add cursors
     cursors = game.input.keyboard.createCursorKeys();
 
-    //Add axis
-
     //Create Axis
     makeAxes();
 
     // vars for drawing func
     GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = true;
+
+    draw();
 }
 
 function update() {
 	//update loop
 
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+    
     if (cursors.up.isDown)
     {
         GD.player.y = GD.player.y - 10;
@@ -125,42 +134,37 @@ function update() {
         GD.player.x = GD.player.x + 10;
     }
     stars.forEach(function(star) {
-
-        if(collides(GD.player, star))
-            
-            {
+        if(collides(GD.player, star)) {
             collectStar(GD.player, star);
-            }   
+        }   
     })
 
-	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    // redrawPlot(GD.fun,GD.curveBuff);
-
+	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
 }
 
-//a is 
+//----------
 
-function collides (a, b) 
-    {
-       
+function collides (a, b) {
+
         if(a != undefined)
         {
+
             return !(
-                ((a.y + a.height-5) < (b.y)) ||
-                (a.y > (b.y + b.height)) ||
-                ((a.x + a.width-5) < b.x) ||
-                (a.x > (b.x + b.width))
+                ((a.y + a.height +5) < (b.y)) ||
+                (a.y -5> (b.y + b.height) ) ||
+                ((a.x + a.width) +5  < b.x) ||
+                (a.x -5 > (b.x + b.width))
             );  
         }
 }  
-  
-//----------
 
 function StartGame(){
 	//Grab text
+    GD.fun = symToFn(textBox());
     debugger;
-    GD.fun = exampleFn2;
     GD.redraw = true;
+    GD.running = true;
 }
 
 function textBox() {
@@ -198,7 +202,6 @@ function plotTicks(){
 
 }
 
-// Utils
 function makeColoredRect(key, width, height, r, g, b) {
 	var rect = game.make.bitmapData(width,height,key,true);
 	rect.fill(r,g,b,1);
@@ -212,26 +215,22 @@ function makeRect(key, width, height) {
 }
 
 //Parsing Functions
-
-// ex:
-// s = textbox.getText();
-// f = symToFn(s);
-// for(int x=0;x<canvas.width;x++) {
-// 	canvas.drawPixel(x,f(x));
-// }
-
 function symToFn(string) {
- 	//  split polynomial on [+-]
- 	var parts = string.match("\\d*x\\^\\d*");
+    var exp = Parser.parse(string);
+    return function(x) {
+        return exp.evaluate({x:x});
+    }
+ 	// split polynomial on [+-]
+    // var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
 
- 	return function(x) {
-		var total = evalFactor(parts[0],x);
- 		for(var i=1;i<total.size();i+=2) {
- 			if (parts[i]) total+=evalFactor(parts[i+1],x);
-			else total-=evalFactor(parts[i+1],x);
- 		}
-		return total;
-	}
+    // return function(x) {
+    //     var total = evalFactor(parts[0],x);
+    //     for(var i=1;i<total.length;i+=2) {
+    //     	if (parts[i]) total+=evalFactor(parts[i+1],x);
+    //         else total-=evalFactor(parts[i+1],x);
+    //     }
+    //     return total;
+    // }
 }
 
 function evalFactor(f,x) {
@@ -260,6 +259,15 @@ function loadJSON(file) {
     return res;
 }
 
+function redrawPlot(fn,bmd) {
+    if(!GD.redraw) return;
+    GD.curveBuff.clear();
+    draw(fn,bmd.canvas);
+    GD.redraw = false;
+}
+
+function fun1(x) {return Math.sin(x);  }
+function fun2(x) {return Math.cos(3*x);}
 function exampleFn(x) {
     return x;
 }
@@ -268,15 +276,76 @@ function exampleFn2(x) {
     return x*x;
 }
 
-function redrawPlot(fn,bmd) {
-    if(!GD.redraw) return;
-    debugger;
-    GD.curveBuff.fill(0,0,0,0);
-    for(var x=0;x<bmd.width;x++) {
-        GD.curveBuff.setPixel(x,Math.floor(fn(x/10)),0,0,0,1,true);  
-    }
-    GD.redraw = false;
+function draw(fn,canvas) {
+    if (null==canvas || !canvas.getContext) return;
+
+    var axes={}, ctx=canvas.getContext("2d");
+    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.scale = 40;                 // 40 pixels from x=0 to x=1
+    axes.doNegativeX = true;
+
+    showAxes(ctx,axes);
+    funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
 }
+
+function funGraph (ctx,axes,func,color,thick) {
+    var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+    var iMax = Math.round((ctx.canvas.width-x0)/dx);
+    var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+    ctx.beginPath();
+    ctx.lineWidth = thick;
+    ctx.strokeStyle = color;
+
+    for (var i=iMin;i<=iMax;i++) {
+        xx = dx*i; yy = scale*func(xx/scale);
+        if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
+        else         ctx.lineTo(x0+xx,y0-yy);
+    }
+    ctx.stroke();
+}
+
+function showAxes(ctx,axes) {
+    var x0=axes.x0, w=ctx.canvas.width;
+    var y0=axes.y0, h=ctx.canvas.height;
+    var xmin = axes.doNegativeX ? 0 : x0;
+    ctx.beginPath();
+    ctx.strokeStyle = "rgb(128,128,128)"; 
+    ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
+    ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
+    ctx.stroke();
+}
+
+function NamedRegExp(pattern, string) {
+    pattern=pattern.toString();
+    var result = [];
+    var groupRX = /\(\<(.*?)\>\s(.*?)\)/;
+    while (groupRX.test(pattern)) {
+        var match = groupRX.exec(pattern);
+        result.push({
+            name : match[1],
+            pattern : match[2],
+            value : null
+        });
+        pattern = pattern.replace(groupRX, '('+match[2]+')');
+    }
+
+    var finalMatch=(new RegExp(pattern)).exec(string);
+    if(finalMatch) {
+        for ( var i=0, len=result.length; i<len; i++) {
+            if(finalMatch[(i+1)]!==false) {
+                result[i].value=finalMatch[(i+1)];
+            }
+        }
+    }
+
+    var output = {};
+
+    for(var i = 0;i<result.length;i++) {
+        output[result[i].name]=result[i].value;
+    }
+    return output;
+};
 
 function collectStar(player, star) {
     if(star.alive == true)
