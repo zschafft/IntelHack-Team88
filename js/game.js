@@ -45,6 +45,8 @@ function create () {
     GD.player.anchor.setTo(0.5,0.5);
 
     initHUD();
+    
+    GD.player.bringToTop();
 
     GD.watch('playerX',updatePositionText);
     GD.watch('playerY',updatePositionText);
