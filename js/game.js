@@ -163,8 +163,8 @@ function collides (a, b) {
         {
 
             return !(
-                ((a.y + a.height) - 3 < (b.y)) ||
-                (a.y  > (b.y + b.height) ) ||
+                ((a.y + a.height) - 40< (b.y)) ||
+                (a.y  + 5 > (b.y + b.height) ) ||
                 ((a.x + a.width) - 20 <  b.x) ||
                 (a.x - 8 > (b.x + b.width))
             );  
@@ -363,7 +363,8 @@ function collectStar(player, star) {
             GD.starsCollected = true;
             GD.score = 0;
             console.log(GD.starsCollected);
-            startLevel(++GD.level);
+            GD.level = GD.level + 1;
+            startLevel(GD.level);
             GD.player.destroy();
             GD.player=game.add.sprite(0,0,'delorean');
 
