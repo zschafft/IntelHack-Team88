@@ -3,11 +3,11 @@ var game;
 var GD = {
     level:1,
     score:0,
+    totalscore:0,
     starsCollected:false,
     deltaCap:1/60
 };
 
-var score = 0;
 
 var starsCollected = false;
 
@@ -22,6 +22,7 @@ window.onload = function() {
 function preload () {
     game.load.image('start','img/start_button.png');
     game.load.image('star', 'img/star.png');
+    game.load.image('delorean', 'img/delorean.png');
 }
 
 function create () {
@@ -48,7 +49,14 @@ function create () {
         font: "20px Helvetica",
         style: "bold",
         fill: "white",
-        align: "center"
+        align: "left"
+    });
+
+    GD.totalscoreText = game.add.text(''+(game.width-300)/2, ''+(-230), 'Total Score: ', {
+        font: "20px Helvetica",
+        style: "bold",
+        fill: "white",
+        align: "left"
     });
 
     GD.levelText = game.add.text(''+(30), ''+(-270), '', {
@@ -62,9 +70,11 @@ function create () {
     GD.hud.add(GD.posText);
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
+    GD.hud.add(GD.totalscoreText);
 
 
     GD.scoreText.setText("Score: 0");
+    GD.totalscoreText.setText("Total Score: 0");
 
 
 
@@ -74,8 +84,8 @@ function create () {
     game.camera.follow(GD.hud);
 
     //Delorean
-    makeRect('delorean',50,50);
-    GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
+  //  makeRect('delorean',50,50);
+    GD.player=game.add.sprite(0,0,'delorean');
 
     GD.player.anchor.setTo(0.5,0.5);
 
@@ -151,10 +161,10 @@ function collides (a, b) {
         {
 
             return !(
-                ((a.y + a.height +5) < (b.y)) ||
-                (a.y -5> (b.y + b.height) ) ||
-                ((a.x + a.width) +5  < b.x) ||
-                (a.x -5 > (b.x + b.width))
+                ((a.y + a.height) - 3 < (b.y)) ||
+                (a.y  > (b.y + b.height) ) ||
+                ((a.x + a.width) - 20 <  b.x) ||
+                (a.x - 8 > (b.x + b.width))
             );  
         }
 }  
@@ -247,6 +257,7 @@ function makeStarSprites(arr) {
     }
 	 for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, 'star');
+        star.anchor.setTo(0.5, 0.5);
        // star.events.onKilled.add(function() { score += 10; console.log(score);}, this);
 	}
 }
@@ -352,6 +363,7 @@ function collectStar(player, star) {
     {
         star.kill();
         GD.score += 1;
+        GD.totalscore +=1;
         if(stars.countLiving()==0)
         {
             GD.scoreText.setText("All stars collected!");
@@ -362,6 +374,7 @@ function collectStar(player, star) {
             return;
         }
         GD.scoreText.setText("Score: " + GD.score);
+        GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
 }
 
@@ -372,6 +385,7 @@ function startLevel(lvl)
     starsCollected = false;
     GD.score = 0;
     GD.scoreText.setText("Score: " + GD.score);
+    GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
     makeStarSprites(starArr);
 
