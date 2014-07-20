@@ -13,7 +13,7 @@ var GD = {
 };
 
 window.onload = function() {
-    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
+    game = new Phaser.Game(800, 600, Phaser.WEBGL, '', { preload: preload,
     													create: create,
     													update: update });
 };
@@ -27,6 +27,7 @@ function preload () {
     game.load.image('resetBut', 'img/reset_button.png');
     game.load.image('background', 'img/lotsofstars.jpg');
     game.load.audio('space', 'sounds/World-of-Automatons.mp3');
+    // game.load.script('filter', 'js/Fire.js');
 }
 
 function create () {
@@ -48,6 +49,13 @@ function create () {
     GD.player=game.add.sprite(0,0,'delorean');
     GD.player.anchor.setTo(0.5,0.5);
 
+    // GD.filter = game.add.filter('Fire',800,600);
+    // GD.filter.alpha = 0.0;
+    // GD.fire= game.add.sprite(0,0);
+    // GD.fire.anchor.setTo(0.5,0.5);
+    // GD.fire.width = GD.player.width;
+    // GD.fire.height= GD.player.height;
+    // GD.fire.filters = [GD.filter];
 
     initHUD();
 
@@ -57,6 +65,7 @@ function create () {
 }
 
 function update() {
+    // GD.filter.update();
 	// update delorean position
     if (GD.isRunning)
     {
@@ -114,7 +123,7 @@ function initWatches() {
     updatePositionText('playerX',GD.playerX,GD.playerX);
     updatePositionText('playerY',GD.playerY,GD.playerY);
     updateScoreText('score',GD.score,GD.score);
-    updateTotScoreText('totalScore',GD.totalScore,GD.totalScore);
+    updateTotScoreText('totalscore',GD.totalscore,GD.totalscore);
     updateLevelText('level',GD.level,GD.level);
 }
 
