@@ -234,10 +234,10 @@ function checkForWin() {
         GD.scoreText.setText("All stars collected!");
         GD.score = 0;
         GD.level++;
-        startLevel(GD.level);
         GD.player.x=0;
         GD.player.y=0;
         GD.running=false;
+        if(!startLevel(GD.level)) gameOver();
     }
 }
 
@@ -247,37 +247,9 @@ function collectStar(player, star) {
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
-        if(stars.countLiving()==0)
-        {
-
-            GD.scoreText.setText("All stars collected!");
-            GD.starsCollected = true;
-            GD.score = 0;
-            console.log(GD.starsCollected);
-            GD.level = GD.level + 1;
-            startLevel(GD.level);
-            GD.player.destroy();
-            GD.player=game.add.sprite(0,0,'delorean');
-            GD.player.anchor.setTo(0.5,0.5);
-
-            GD.running=false;
-
-            return;
-        }
-
         GD.scoreText.setText("Score: " + GD.score);
         GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
-}
-
-function startLevel(lvl) {
-    var starArr = GD.ld['level'+lvl];
-    GD.starsCollected = false;
-    GD.score = 0;
-    GD.scoreText.setText("Score: " + GD.score);
-    GD.totalscoreText.setText("Score: " + GD.totalscore);
-    GD.levelText.setText("Level " + GD.level);
-    makeStarSprites(starArr);
 }
 
 function fun1(x) {return Math.sin(x);}
@@ -360,19 +332,21 @@ function collectStar(player, star) {
 function startLevel(lvl)
 {
     var starArr = GD.ld['level'+lvl];
-    if(starArr == null) gameOver();
     starsCollected = false;
     GD.score = 0;
     GD.scoreText.setText("Score: " + GD.score);
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
+    if(starArr == null) return false;
     makeStarSprites(starArr);
+    return true;
 }
 
 function gameOver() {
     alert("FUCK");
     GD.level=1;
     startLevel(GD.level);
+    reset();
 }
 
 function reset() {
