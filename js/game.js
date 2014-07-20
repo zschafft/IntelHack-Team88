@@ -115,7 +115,7 @@ function create () {
 function update() {
 	//update loop
 
-	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+	GD.posText.setText("Position: (" + Math.ceil(GD.player.x) + "," + -Math.ceil(GD.player.y) + ")");
 
     if (GD.running)
     {
@@ -123,6 +123,12 @@ function update() {
         {
             GD.running = false;
             alert("Level Complete");
+        }
+
+        if (GD.player.x/20 == game.width/20 - 5 || GD.player.y/20 == game.height/20 - 20)
+        {
+            GD.running = false;
+            alert("Try Again");
         }
         GD.player.x += 1;
         GD.player.y = -20*GD.fun(GD.player.x/20);
@@ -135,7 +141,7 @@ function update() {
         }   
     })
 
-	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
+	GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
     redrawPlot(GD.fun,GD.curveBuff);
 }
 
