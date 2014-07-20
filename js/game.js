@@ -8,7 +8,8 @@ var GD = {
     isRunning:false,
     speed:100,
     playerX:0,playerY:0,
-    scale:20
+    scale:20,
+    needReset:false
 };
 
 window.onload = function() {
@@ -45,7 +46,7 @@ function create () {
     GD.player.anchor.setTo(0.5,0.5);
 
     initHUD();
-    
+
     GD.player.bringToTop();
 
     GD.watch('playerX',updatePositionText);
@@ -56,6 +57,10 @@ function create () {
 }
 
 function update() {
+    if(GD.needReset) {
+        resetLevel();
+    }
+
 	// update delorean position
     if (GD.isRunning)
     {
@@ -112,7 +117,7 @@ function initHUD() {
     GD.hud = game.add.group();
 
     // Add buttons
-    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=resetLevel);
+    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=function(){GD.needReset = true;});
     GD.startBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=startTravel);
  
     //Add HUD
