@@ -377,7 +377,7 @@ function gameOver() {
 
 function reset() {
     startLevel(GD.level);
-    GD.totalscore = GD.level * 5;
+    GD.totalscore = GD.level - 1 * 5;
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.player.destroy();
     GD.player=game.add.sprite(0,0,'delorean');
