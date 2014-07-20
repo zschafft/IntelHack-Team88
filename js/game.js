@@ -1,7 +1,7 @@
 var game;
 
 var GD = {
-    level:11,
+    level:1,
     score:0,
     totalscore:0,
     deltaCap:1/60,
@@ -28,6 +28,7 @@ function preload () {
     game.load.image('background', 'img/lotsofstars.jpg');
     game.load.audio('space', 'sounds/World-of-Automatons.mp3');
     game.load.audio('starsound', 'sounds/powerUp7.mp3');
+    game.load.audio('levelup', 'sounds/lowThreeTone.mp3');
 }
 
 function create () {
@@ -104,6 +105,7 @@ function initAudio() {
     backAudio = game.add.audio('space');
     backAudio.play("",0,1,true,true);
     starsound = game.add.audio('starsound');
+    levelupsound = game.add.audio('levelup');
 }
 
 function initWatches() {
@@ -231,6 +233,10 @@ function makeStarSprites(arr) {
 
 function loadlevel(lvl)
 {
+    backAudio.pause();
+    levelupsound.volume = 2;
+    levelupsound.play();
+    backAudio.play();
     if(lvl==12) debugger;
     var starArr = GD.ld['level'+lvl];
     if(starArr == null) return false; //no level data
