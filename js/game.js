@@ -13,8 +13,8 @@ function preload () {
 }
 
 function create () {
-
     game.stage.backgroundColor = 0x000053
+
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
 
@@ -57,19 +57,25 @@ function create () {
 
 
     // vars for drawing func
-    GD.pix = game.context.createImageData(1,1); // only do this once per page
-    GD._pix  = GD.pix.data;                           // only do this once per page
+    GD.fun = exampleFn;
+    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
+    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveBuff.fill(0,0,0,0);
+    GD.redraw = true;
 }
 
 function update(tpf) {
 	//update loop
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
 }
 //----------
 
 function StartGame(){
 	//Grab text
-  	alert(textBox());
+    debugger;
+    GD.fun = exampleFn2;
+    GD.redraw = true;
 }
 
 function textBox() {
@@ -99,7 +105,6 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
-
  	//  split polynomial on [+-]
  	var parts = string.match("([/d]*x/^[/d][+-])+|[/d]*");
  	var parts = string.replace("+", true);
@@ -143,8 +148,6 @@ function evalFactor(f,x) {
  	return f.c*Math.pow(x,f.e);
 }
 
-// where arr = [{x:100,y:100},{x:200,y:150}];
-
 function makeStarSprites(arr) {
 	 for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, game.cache.getBitmapData('star'));
@@ -165,12 +168,20 @@ function makeAxis() {
     // make y axis
 }
 
+function exampleFn(x) {
+    return x;
+}
+
+function exampleFn2(x) {
+    return x*x;
+}
+
 function redrawPlot(fn,bmd) {
-    GD._pix[0] = 0;
-    GD._pix[1] = 0;
-    GD._pix[2] = 0;
-    GD._pix[3] = 0;
+    if(!GD.redraw) return;
+    debugger;
+    GD.curveBuff.fill(0,0,0,0);
     for(var x=0;x<bmd.width;x++) {
-        myContext.putImageData(GD.pix, x, fn(x));   
+        GD.curveBuff.setPixel(x,Math.floor(fn(x/10)),0,0,0,1,true);  
     }
+    GD.redraw = false;
 }
