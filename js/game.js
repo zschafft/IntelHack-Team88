@@ -1,7 +1,7 @@
 var game;
 
 var GD = {
-    level:1,
+    level:11,
     score:0,
     totalscore:0,
     deltaCap:1/60,
@@ -111,11 +111,11 @@ function initWatches() {
     GD.watch('totalscore',updateTotScoreText);
     GD.watch('level',updateLevelText);
 
-    GD.playerX = 0;
-    GD.playerY = 0;
-    GD.score = 0;
-    GD.totalscore = 0;
-    GD.level = 1;
+    updatePositionText('playerX',GD.playerX,GD.playerX);
+    updatePositionText('playerY',GD.playerY,GD.playerY);
+    updateScoreText('score',GD.score,GD.score);
+    updateTotScoreText('totalScore',GD.totalScore,GD.totalScore);
+    updateLevelText('level',GD.level,GD.level);
 }
 
 function initLevelData() {
@@ -223,6 +223,7 @@ function makeStarSprites(arr) {
 
 function loadlevel(lvl)
 {
+    if(lvl==12) debugger;
     var starArr = GD.ld['level'+lvl];
     if(starArr == null) return false; //no level data
     makeStarSprites(starArr);
@@ -264,6 +265,7 @@ function startTravel(){
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
         GD.level++;
+        debugger;
         if(!loadlevel(GD.level)) gameOver();
         resetLevel();
     }
