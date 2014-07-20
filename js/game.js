@@ -7,7 +7,8 @@ var GD = {
     deltaCap:1/60,
     isRunning:false,
     speed:50,
-    playerX:0,playerY:0
+    playerX:0,playerY:0,
+    scale:20
 };
 
 window.onload = function() {
@@ -23,10 +24,11 @@ function preload () {
     game.load.image('star', 'img/star.png');
     game.load.image('delorean', 'img/smalldelorean.png');
     game.load.image('resetBut', 'img/reset_button.png');
+    game.load.image('background', 'img/lotsofstars.jpg');
 }
 
 function create () {
-    game.stage.backgroundColor = makeRandomColor();
+    game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
 
@@ -53,9 +55,10 @@ function update() {
 	// update delorean position
     if (GD.isRunning)
     {   
+        debugger;
         var oldX = GD.player.x;
         var oldY = GD.player.y;
-        GD.playerX += GD.speed * GD.deltaCap;
+        GD.playerX += (GD.speed * GD.deltaCap);
         GD.playerY =  -GD.fun(GD.playerX);
         GD.player.angle = 100*(game.math.angleBetween(oldX, oldY, GD.player.x, GD.player.y)) * .58;
     }
@@ -73,12 +76,13 @@ function update() {
     });
 
     // out of bounds check
-    if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 || 
-        GD.player.y >=  game.height/2) 
-    {
-        resetLevel();
-    }
+    // if (GD.player.x >  game.width-100 ||
+    //     GD.player.y <= -game.height/2 || 
+    //     GD.player.y >=  game.height/2) 
+    // {
+    //     GD.running = false;
+    //     reset();
+    // }
 
     checkForWin();
 }
@@ -168,6 +172,10 @@ function updateLevelText(id,oldval,newval) {
     return newval;
 }
 
+function TWC(v) {
+    return v/20;
+}
+
 function startTravel(){
 	//Grab text
     GD.fun = symToFn(textBox());
@@ -223,15 +231,18 @@ function makeRect(key, width, height) {
 }
 
 function makeRandomColor() {
-    console.log(Phaser.Color.getRandomColor(0, 255));
-    return Phaser.Color.getRandomColor(0, 75);
+    var r = game.rnd.between(175,255);
+    var b = game.rnd.between(175,255);
+    var g = game.rnd.between(175,255);
+    var colorString = "rgb(" + r + "," + g + "," + b +")";
+    return colorString;
 }
 
 //Parsing Functions
 function symToFn(string) {
     var exp = Parser.parse(string);
     return function(x) {
-        return exp.evaluate({x:x});
+        return GD.scale*exp.evaluate({x:x/GD.scale});
     }
 }
 
@@ -284,10 +295,10 @@ function drawPlot(fn,bmd) {
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
     axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
-    axes.scale = 20;                 // 20 pixels from x=0 to x=1
+    axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
-    funGraph(ctx,axes,fn,"rgb(11,153,11)",3);
+    funGraph(ctx,axes,fn,makeRandomColor(),3); 
     GD.redraw = false;
 }
 
@@ -356,5 +367,6 @@ function resetLevel() {
     GD.isRunning = false;
     GD.playerX = 0;
     GD.playerY = 0;
+    GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
 }
