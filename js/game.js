@@ -1,7 +1,7 @@
 var game;
 
 var GD = {
-    level:1,
+    level:11,
     score:0,
     totalscore:0,
     starsCollected:false,
@@ -82,13 +82,13 @@ function update() {
     });
 
     // out of bounds check
-    if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 || 
-        GD.player.y >=  game.height/2) 
-    {
-        GD.running = false;
-        reset();
-    }
+    // if (GD.player.x >  game.width-100 ||
+    //     GD.player.y <= -game.height/2 || 
+    //     GD.player.y >=  game.height/2) 
+    // {
+    //     GD.running = false;
+    //     reset();
+    // }
 }
 
 //----------
