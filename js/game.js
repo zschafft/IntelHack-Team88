@@ -1,6 +1,8 @@
 var game;
 var score = 0;
-var GD = {};
+var GD = {
+    deltaCap:1/60
+};
 var starsCollected = false;
 
 window.onload = function() {
@@ -17,6 +19,7 @@ function preload () {
 
 function create () {
     game.stage.backgroundColor = 0x000053
+    game.time.deltaCap=GD.deltaCap;
 
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
@@ -118,9 +121,7 @@ function update() {
     redrawPlot(GD.fun,GD.curveBuff);
 }
 
-function collides (a, b) 
-    {
-       
+function collides (a, b) {
         if(a != undefined)
         {
             return !(
@@ -200,18 +201,21 @@ function makeRect(key, width, height) {
 // }
 
 function symToFn(string) {
- 	//  split polynomial on [+-]
-    // var re = new RegExp("\\d*x\\^\\d*");
-    var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
-    debugger;
- 	return function(x) {
-		var total = evalFactor(parts[0],x);
- 		for(var i=1;i<total.length;i+=2) {
- 			if (parts[i]) total+=evalFactor(parts[i+1],x);
-			else total-=evalFactor(parts[i+1],x);
- 		}
-		return total;
-	}
+    var exp = Parser.parse(string);
+    return function(x) {
+        return exp.evaluate({x:x});
+    }
+ 	// split polynomial on [+-]
+    // var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
+
+    // return function(x) {
+    //     var total = evalFactor(parts[0],x);
+    //     for(var i=1;i<total.length;i+=2) {
+    //     	if (parts[i]) total+=evalFactor(parts[i+1],x);
+    //         else total-=evalFactor(parts[i+1],x);
+    //     }
+    //     return total;
+    // }
 }
 
 function evalFactor(f,x) {
@@ -260,7 +264,7 @@ function draw(fn,canvas) {
     axes.doNegativeX = true;
 
     showAxes(ctx,axes);
-    funGraph(ctx,axes,fn,"rgb(11,153,11)",1); 
+    funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
 }
 
 function funGraph (ctx,axes,func,color,thick) {
@@ -272,9 +276,9 @@ function funGraph (ctx,axes,func,color,thick) {
     ctx.strokeStyle = color;
 
     for (var i=iMin;i<=iMax;i++) {
-    xx = dx*i; yy = scale*func(xx/scale);
-    if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
-    else         ctx.lineTo(x0+xx,y0-yy);
+        xx = dx*i; yy = scale*func(xx/scale);
+        if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
+        else         ctx.lineTo(x0+xx,y0-yy);
     }
     ctx.stroke();
 }
