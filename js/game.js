@@ -96,7 +96,7 @@ function initLevelData() {
 }
 
 function initCurve() {
-    GD.curveBuff = game.make.bitmapData(1100,600,'curve',true);
+    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
     GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = false;
@@ -249,6 +249,7 @@ function collectStar(player, star) {
 }
 
 function resetLevel() {
+    GD.curveBuff.clear();
     GD.isRunning = false;
     GD.playerX = 0;
     GD.playerY = 0;
