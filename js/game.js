@@ -92,6 +92,7 @@ function update() {
 	//update loop
 
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+    
     if (cursors.up.isDown)
     {
         GD.player.y = GD.player.y - 10;
@@ -109,17 +110,16 @@ function update() {
         GD.player.x = GD.player.x + 10;
     }
     stars.forEach(function(star) {
-
-        if(collides(GD.player, star))
-            
-            {
+        if(collides(GD.player, star)) {
             collectStar(GD.player, star);
-            }   
+        }   
     })
 
 	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
     redrawPlot(GD.fun,GD.curveBuff);
 }
+
+//----------
 
 function collides (a, b) {
         if(a != undefined)
@@ -132,8 +132,6 @@ function collides (a, b) {
             );  
         }
 }  
-  
-//----------
 
 function StartGame(){
 	//Grab text
@@ -178,7 +176,6 @@ function plotTicks(){
 
 }
 
-// Utils
 function makeColoredRect(key, width, height, r, g, b) {
 	var rect = game.make.bitmapData(width,height,key,true);
 	rect.fill(r,g,b,1);
@@ -192,14 +189,6 @@ function makeRect(key, width, height) {
 }
 
 //Parsing Functions
-
-// ex:
-// s = textbox.getText();
-// f = symToFn(s);
-// for(int x=0;x<canvas.width;x++) {
-// 	canvas.drawPixel(x,f(x));
-// }
-
 function symToFn(string) {
     var exp = Parser.parse(string);
     return function(x) {
