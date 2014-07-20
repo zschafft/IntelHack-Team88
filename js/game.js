@@ -235,7 +235,7 @@ function loadJSON(file) {
 
 function redrawPlot(fn,bmd) {
     if(!GD.redraw) return;
-    GD.curveBuff.fill(0,0,0,0);
+    GD.curveBuff.clear();
     draw(fn,bmd.canvas);
     GD.redraw = false;
 }
