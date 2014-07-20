@@ -83,12 +83,6 @@ function create () {
 
     game.camera.follow(GD.hud);
 
-    //Delorean
-  //  makeRect('delorean',50,50);
-    GD.player=game.add.sprite(0,0,'delorean');
-
-    GD.player.anchor.setTo(0.5,0.5);
-
     GD.running=false;
 
     //Stars
@@ -111,6 +105,10 @@ function create () {
 
     //Create Axis
     makeAxes();
+
+    //Delorean
+    GD.player=game.add.sprite(0,0,'delorean');
+    GD.player.anchor.setTo(0.5,0.5);
 
     // vars for drawing func
     //GD.fun = exampleFn;
@@ -309,16 +307,16 @@ function funGraph (ctx,axes,func,color,thick) {
     ctx.stroke();
 }
 
-function showAxes(ctx,axes) {
-    var x0=axes.x0, w=ctx.canvas.width;
-    var y0=axes.y0, h=ctx.canvas.height;
-    var xmin = axes.doNegativeX ? 0 : x0;
-    ctx.beginPath();
-    ctx.strokeStyle = "rgb(128,128,128)"; 
-    ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
-    ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
-    ctx.stroke();
-}
+// function showAxes(ctx,axes) {
+//     var x0=axes.x0, w=ctx.canvas.width;
+//     var y0=axes.y0, h=ctx.canvas.height;
+//     var xmin = axes.doNegativeX ? 0 : x0;
+//     ctx.beginPath();
+//     ctx.strokeStyle = "rgb(128,128,128)"; 
+//     ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
+//     ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
+//     ctx.stroke();
+// }
 
 function NamedRegExp(pattern, string) {
     pattern=pattern.toString();
