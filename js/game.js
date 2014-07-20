@@ -23,7 +23,6 @@ function create () {
 
   	//Add button
     var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
-    // button.anchor.setTo(0.2, 0.5);
 
     //Add position
     GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
@@ -58,9 +57,6 @@ function create () {
     //Create Axis
     makeAxes();
 
-    
-
-
     // vars for drawing func
     GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
@@ -72,7 +68,7 @@ function create () {
 function update() {
 	//update loop
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    redrawPlot(GD.fun,GD.curveBuff);
+    // redrawPlot(GD.fun,GD.curveBuff);
 }
 //----------
 
@@ -102,7 +98,6 @@ function makeAxes(){
     makeColoredRect('xTick',5,15,105,105,105);
 
     plotTicks();
-
 }
 
 function plotTicks(){
@@ -143,9 +138,7 @@ function makeRect(key, width, height) {
 
 function symToFn(string) {
  	//  split polynomial on [+-]
- 	var parts = string.match("([/d]*x/^[/d][+-])+|[/d]*");
- 	var parts = string.replace("+", true);
- 	var parts = string.replace("-", false);
+ 	var parts = string.match("\\d*x\\^\\d*");
 
  	return function(x) {
 		var total = evalFactor(parts[0],x);
@@ -156,30 +149,6 @@ function symToFn(string) {
 		return total;
 	}
 }
-
-function testRegex(string) {
-    //var regex = new RegExp("([/d]*x/^[/d][+-])+|[/d]*)");
-    
-    var regex = new RegExp("[0-9]*x");
-    var parts = regex.exec(string);
-    //var parts = string.match(([/d]*x/^[/d][+-])+|[/d]*/g);
-    //var parts = .replace("+", "plus");
-   // var parts = string.replace("+", true);
-   // var parts = string.replace("-", false);
-    //var parts = string;
-    return parts;
-}
-
-	//  split polynomial on [+-]
-	// ex: '5x^2 + 3x - 10' -> var parts = [{c:5,e:2},true,{c:3,e:1},false,{c:10,e:0}]
-// 	return function(x) {
-// 		var total = evalFactor(parts[0],x);
-// 		for(int i=1;i<total.size();i+=2) {
-// 			if (parts[i]) total+=evalFactor(parts[i+1],x);
-// 			else total-=evalFactor(parts[i+1],x);
-// 		}
-// 		return total;
-// 	}
 
 function evalFactor(f,x) {
  	return f.c*Math.pow(x,f.e);
@@ -197,12 +166,6 @@ function loadJSON(file) {
     request.send(null)
     var res = JSON.parse(request.responseText);
     return res;
-};
-
-function makeAxis() {
-    // make X axis
-
-    // make y axis
 }
 
 function exampleFn(x) {
