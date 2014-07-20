@@ -1,7 +1,7 @@
 var game;
 
 var GD = {
-    level:1,
+    level:11,
     score:0,
     totalscore:0,
     deltaCap:1/60,
@@ -58,11 +58,6 @@ function create () {
 }
 
 function update() {
-    if(GD.needReset) {
-        resetLevel();
-        GD.needReset = false;
-    }
-
 	// update delorean position
     if (GD.isRunning)
     {
@@ -95,6 +90,11 @@ function update() {
     // }
 
     checkForWin();
+
+    if(GD.needReset) {
+        resetLevel();
+        GD.needReset = false;
+    }
 }
 
 //----------
@@ -113,11 +113,11 @@ function initWatches() {
     GD.watch('totalscore',updateTotScoreText);
     GD.watch('level',updateLevelText);
 
-    GD.playerX = 0;
-    GD.playerY = 0;
-    GD.score = 0;
-    GD.totalscore = 0;
-    GD.level = 1;
+    updatePositionText('playerX',GD.playerX,GD.playerX);
+    updatePositionText('playerY',GD.playerY,GD.playerY);
+    updateScoreText('score',GD.score,GD.score);
+    updateTotScoreText('totalScore',GD.totalScore,GD.totalScore);
+    updateLevelText('level',GD.level,GD.level);
 }
 
 function initLevelData() {
@@ -231,6 +231,7 @@ function makeStarSprites(arr) {
 
 function loadlevel(lvl)
 {
+    if(lvl==12) debugger;
     var starArr = GD.ld['level'+lvl];
     if(starArr == null) return false; //no level data
     makeStarSprites(starArr);
@@ -272,6 +273,7 @@ function startTravel(){
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
         GD.level++;
+        debugger;
         if(!loadlevel(GD.level)) gameOver();
         resetLevel();
     }
@@ -293,6 +295,8 @@ function resetLevel() {
     GD.playerY = 0;
     GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
+    GD.totalscore -= GD.score;
+    GD.score = 0;
     GD.curveBuff.clear();
 }
 
@@ -347,7 +351,7 @@ function drawPlot(fn,bmd) {
 
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.y0 = canvas.height/2+25;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
