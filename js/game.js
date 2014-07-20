@@ -19,7 +19,7 @@ function preload () {
     game.load.image('startBut', 'img/start_button.png');
     game.load.image('stop', 'img/reset_button.png');
     game.load.image('star', 'img/star.png');
-    game.load.image('delorean', 'img/delorean.png');
+    game.load.image('delorean', 'img/smalldelorean.png');
     game.load.image('resetBut', 'img/reset_button.png');
 }
 
@@ -47,6 +47,7 @@ function create () {
 
     // vars for drawing func
     //GD.fun = exampleFn;
+    GD.square = game.make.bitmapData(makeRect('square', 100, 100));
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
     GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
@@ -54,15 +55,18 @@ function create () {
 
     //Delorean
     GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,0.5);
+    GD.player.anchor.setTo(0.5,.9);
 }
 
 function update() {
-	// update delorean position
+	// update delorean position and angle
     if (GD.running)
     {
+        var oldX = GD.player.x;
+        var oldY = GD.player.y;
         GD.player.x += 1;
         GD.player.y = -20*GD.fun(GD.player.x/20);
+        GD.player.angle = 100*(game.math.angleBetween(oldX, oldY, GD.player.x, GD.player.y)) * .58;
     }
 
     GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
@@ -78,7 +82,7 @@ function update() {
 
     // out of bounds check
     if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 ||
+        GD.player.y <= -game.height/2 || 
         GD.player.y >=  game.height/2) 
     {
         GD.running = false;
@@ -338,7 +342,9 @@ function startLevel(lvl)
     GD.scoreText.setText("Score: " + GD.score);
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
+
     if(starArr == null) return false;
+
     makeStarSprites(starArr);
     return true;
 }
@@ -356,7 +362,7 @@ function reset() {
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.player.destroy();
     GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,0.5);
+    GD.player.anchor.setTo(0.5,0.9);
     GD.running = false;
     GD.curveBuff.clear();
 }
