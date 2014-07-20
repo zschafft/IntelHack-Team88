@@ -30,6 +30,71 @@ function create () {
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
 
+    initHUD();
+
+    GD.running=false;
+
+    //Stars
+    stars = game.add.group();
+    GD.ld = loadJSON('json/levels.json');
+    startLevel(GD.level);
+
+    //add cursors
+    cursors = game.input.keyboard.createCursorKeys();
+
+    //Create Axis
+    makeAxes();
+
+    // vars for drawing func
+    //GD.fun = exampleFn;
+    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
+    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
+    GD.curveBuff.fill(0,0,0,0);
+    GD.redraw = false;
+
+    //Delorean
+    GD.player=game.add.sprite(0,0,'delorean');
+    GD.player.anchor.setTo(0.5,0.5);
+}
+
+function update() {
+	// update delorean position
+    if (GD.running)
+    {
+        GD.player.x += 1;
+        GD.player.y = -20*GD.fun(GD.player.x/20);
+    }
+
+    GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
+
+    // collision check
+    stars.forEach(function(star) {
+        if(GD.player.overlap(star)) {
+            collectStar(GD.player, star);
+        }
+    });
+
+    // check for level complete
+    if (GD.starsCollected)
+    {
+        GD.running = false;
+        alert("Level Complete");
+    }
+
+    // out of bounds check
+    if (GD.player.x >  game.width-100 ||
+        GD.player.y <= -game.height/2 ||
+        GD.player.y >=  game.height/2) 
+    {
+        GD.running = false;
+        alert("Try Again");
+    }
+}
+
+//----------
+
+function initHUD() {
     // Make hud group
     GD.hud = game.add.group();
 
@@ -79,68 +144,7 @@ function create () {
     GD.hud.x=(game.height-100)/2;
 
     game.camera.follow(GD.hud);
-
-    GD.running=false;
-
-    //Stars
-    stars = game.add.group();
-    GD.ld = loadJSON('json/levels.json');
-    startLevel(GD.level);
-
-    //add cursors
-    cursors = game.input.keyboard.createCursorKeys();
-
-    //Create Axis
-    makeAxes();
-
-    // vars for drawing func
-    //GD.fun = exampleFn;
-    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
-    GD.curveBuff.fill(0,0,0,0);
-    GD.redraw = false;
-
-    //Delorean
-    GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,0.5);
 }
-
-function update() {
-	// update delorean position
-    if (GD.running)
-    {
-        GD.player.x += 1;
-        GD.player.y = -20*GD.fun(GD.player.x/20);
-    }
-
-    GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
-    redrawPlot(GD.fun,GD.curveBuff);
-
-    // collision check
-    stars.forEach(function(star) {
-        if(GD.player.overlap(star)) {
-            collectStar(GD.player, star);
-        }   
-    })
-
-    // check for level complete
-    if (GD.starsCollected)
-    {
-        GD.running = false;
-        alert("Level Complete");
-    }
-
-    // out of bounds check
-    if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 ||
-        GD.player.y >=  game.height/2) 
-    {
-            GD.running = false;
-            alert("Try Again");
-    }
-}
-
-//----------
 
 function StartGame(){
 	//Grab text
@@ -220,7 +224,6 @@ function makeStarSprites(arr) {
 	 for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, 'star');
         star.anchor.setTo(0.5, 0.5);
-       // star.events.onKilled.add(function() { score += 10; console.log(score);}, this);
 	}
 }
 
@@ -255,7 +258,6 @@ function collectStar(player, star) {
             startLevel(GD.level);
             GD.player.destroy();
             GD.player=game.add.sprite(0,0,'delorean');
-
             GD.player.anchor.setTo(0.5,0.5);
 
             GD.running=false;
