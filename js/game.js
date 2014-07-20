@@ -54,8 +54,7 @@ function create () {
 function update() {
 	// update delorean position
     if (GD.isRunning)
-    {   
-        debugger;
+    {
         var oldX = GD.player.x;
         var oldY = GD.player.y;
         GD.playerX += (GD.speed * GD.deltaCap);
