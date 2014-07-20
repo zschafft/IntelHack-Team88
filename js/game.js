@@ -8,7 +8,8 @@ var GD = {
     isRunning:false,
     speed:100,
     playerX:0,playerY:0,
-    scale:20
+    scale:20,
+    needReset:false
 };
 
 window.onload = function() {
@@ -45,17 +46,17 @@ function create () {
     GD.player.anchor.setTo(0.5,0.5);
 
     initHUD();
-    
+
     GD.player.bringToTop();
 
-    GD.watch('playerX',updatePositionText);
-    GD.watch('playerY',updatePositionText);
-    GD.watch('score',updateScoreText);
-    GD.watch('totalscore',updateTotScoreText);
-    GD.watch('level',updateLevelText);
+    initWatches();
 }
 
 function update() {
+    if(GD.needReset) {
+        resetLevel();
+    }
+
 	// update delorean position
     if (GD.isRunning)
     {
@@ -93,6 +94,19 @@ function update() {
 //----------
 
 // Init helpers
+function initWatches() {
+    GD.watch('playerX',updatePositionText);
+    GD.watch('playerY',updatePositionText);
+    GD.watch('score',updateScoreText);
+    GD.watch('totalscore',updateTotScoreText);
+    GD.watch('level',updateLevelText);
+
+    GD.playerX = 0;
+    GD.playerY = 0;
+    GD.score = 0;
+    GD.totalscore = 0;
+    GD.level = 1;
+}
 
 function initLevelData() {
     GD.stars = game.add.group();
@@ -112,11 +126,11 @@ function initHUD() {
     GD.hud = game.add.group();
 
     // Add buttons
-    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=resetLevel);
+    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=function(){GD.needReset = true;});
     GD.startBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=startTravel);
  
     //Add HUD
-    GD.posText = game.add.text((game.width-600)/2, (game.width-300)/2, '', {
+    GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -235,7 +249,6 @@ function startTravel(){
     GD.redraw = true;
     GD.isRunning = true;
 }
-
 
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
