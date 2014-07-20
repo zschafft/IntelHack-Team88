@@ -68,13 +68,11 @@ function create () {
 function update() {
 	//update loop
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    // redrawPlot(GD.fun,GD.curveBuff);
 }
 //----------
 
 function StartGame(){
 	//Grab text
-    debugger;
     GD.fun = exampleFn2;
     GD.redraw = true;
 }
