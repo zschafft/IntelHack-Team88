@@ -1,6 +1,7 @@
 var game;
 var score = 0;
 var GD = {};
+var starsCollected = false;
 
 window.onload = function() {
     game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
@@ -25,16 +26,29 @@ function create () {
 
   	//Add button
     var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
-
+ 
     //Add position
     GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
-        font: "20px Arial",
-        fill: "red",
+        font: "20px Helvetica",
+        fill: "white",
+        align: "center"
+    });
+
+    GD.scoreText = game.add.text(''+(game.width-300)/2, ''+(-270), 'Score: ', {
+        font: "20px Helvetica",
+        style: "bold",
+        fill: "white",
         align: "center"
     });
 
     GD.hud.add(button);
     GD.hud.add(GD.posText);
+    GD.hud.add(GD.scoreText);
+
+
+    GD.scoreText.setText("Score: 0");
+
+
 
     GD.hud.x=(game.width-100)/2;
     GD.hud.x=(game.height-100)/2;
@@ -53,48 +67,38 @@ function create () {
     stars = game.add.group();
     jsonText = loadJSON('json/levels.json');
     makeStarSprites(jsonText["level1"]);
+    starsCollected = false;
 
     //add cursors
     cursors = game.input.keyboard.createCursorKeys();
-
-    //Add axis
 
     //Create Axis
     makeAxes();
 
     // vars for drawing func
-    GD.fun = exampleFn;
+    //GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
-    GD.redraw = true;
+    GD.redraw = false;
+
+    draw();
 }
 
 function update() {
 	//update loop
 
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    // if (cursors.up.isDown)
-    // {
-    //     GD.player.y = GD.player.y - 10;
-    // }
-    // if(cursors.down.isDown)
-    // {
-    //     GD.player.y = GD.player.y + 10;
-    // }
-    // if(cursors.left.isDown)
-    // {
-    //     GD.player.x = GD.player.x - 10;
-    // }
-    // if(cursors.right.isDown)
-    // {
-    //     GD.player.x = GD.player.x + 10;
-    // }
 
     if (GD.running)
     {
-        GD.running = false;
-        GD.y = evalFactor(GD.fun,GD.x)
+        if (starsCollected)
+        {
+            GD.running = false;
+            alert("Level Complete")
+        }
+        GD.player.x += 1
+        GD.player.y = -GD.fun(GD.player.x/20)
     }
 
 
@@ -107,14 +111,9 @@ function update() {
             }   
     })
 
-	GD.posText.setText("Position: (" + GD.player.x + "," + -GD.player.y + ")");
-    // redrawPlot(GD.fun,GD.curveBuff);
-
-
-
+	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
 }
-
-
 
 function collides (a, b) 
     {
@@ -134,8 +133,8 @@ function collides (a, b)
 
 function StartGame(){
 	//Grab text
-    debugger;
-    GD.fun = exampleFn2;
+    GD.fun = symToFn(textBox());
+    //debugger;
     GD.redraw = true;
     GD.running = true;
 }
@@ -199,11 +198,12 @@ function makeRect(key, width, height) {
 
 function symToFn(string) {
  	//  split polynomial on [+-]
- 	var parts = string.match("\\d*x\\^\\d*");
-
+    // var re = new RegExp("\\d*x\\^\\d*");
+    var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
+    //debugger;
  	return function(x) {
 		var total = evalFactor(parts[0],x);
- 		for(var i=1;i<total.size();i+=2) {
+ 		for(var i=1;i<total.length;i+=2) {
  			if (parts[i]) total+=evalFactor(parts[i+1],x);
 			else total-=evalFactor(parts[i+1],x);
  		}
@@ -230,6 +230,15 @@ function loadJSON(file) {
     return res;
 }
 
+function redrawPlot(fn,bmd) {
+    if(!GD.redraw) return;
+    GD.curveBuff.clear();
+    draw(fn,bmd.canvas);
+    GD.redraw = false;
+}
+
+function fun1(x) {return Math.sin(x);  }
+function fun2(x) {return Math.cos(3*x);}
 function exampleFn(x) {
     return x;
 }
@@ -238,22 +247,90 @@ function exampleFn2(x) {
     return x*x;
 }
 
-function redrawPlot(fn,bmd) {
-    if(!GD.redraw) return;
-    debugger;
-    GD.curveBuff.fill(0,0,0,0);
-    for(var x=0;x<bmd.width;x++) {
-        GD.curveBuff.setPixel(x,Math.floor(fn(x/10)),0,0,0,1,true);  
-    }
-    GD.redraw = false;
+function draw(fn,canvas) {
+    if (null==canvas || !canvas.getContext) return;
+
+    var axes={}, ctx=canvas.getContext("2d");
+    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.scale = 40;                 // 40 pixels from x=0 to x=1
+    axes.doNegativeX = true;
+
+    showAxes(ctx,axes);
+    funGraph(ctx,axes,fn,"rgb(11,153,11)",1); 
 }
+
+function funGraph (ctx,axes,func,color,thick) {
+    var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+    var iMax = Math.round((ctx.canvas.width-x0)/dx);
+    var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+    ctx.beginPath();
+    ctx.lineWidth = thick;
+    ctx.strokeStyle = color;
+
+    for (var i=iMin;i<=iMax;i++) {
+    xx = dx*i; yy = scale*func(xx/scale);
+    if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
+    else         ctx.lineTo(x0+xx,y0-yy);
+    }
+    ctx.stroke();
+}
+
+function showAxes(ctx,axes) {
+    var x0=axes.x0, w=ctx.canvas.width;
+    var y0=axes.y0, h=ctx.canvas.height;
+    var xmin = axes.doNegativeX ? 0 : x0;
+    ctx.beginPath();
+    ctx.strokeStyle = "rgb(128,128,128)"; 
+    ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
+    ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
+    ctx.stroke();
+}
+
+function NamedRegExp(pattern, string) {
+    pattern=pattern.toString();
+    var result = [];
+    var groupRX = /\(\<(.*?)\>\s(.*?)\)/;
+    while (groupRX.test(pattern)) {
+        var match = groupRX.exec(pattern);
+        result.push({
+            name : match[1],
+            pattern : match[2],
+            value : null
+        });
+        pattern = pattern.replace(groupRX, '('+match[2]+')');
+    }
+
+    var finalMatch=(new RegExp(pattern)).exec(string);
+    if(finalMatch) {
+        for ( var i=0, len=result.length; i<len; i++) {
+            if(finalMatch[(i+1)]!==false) {
+                result[i].value=finalMatch[(i+1)];
+            }
+        }
+    }
+
+    var output = {};
+
+    for(var i = 0;i<result.length;i++) {
+        output[result[i].name]=result[i].value;
+    }
+    return output;
+};
 
 function collectStar(player, star) {
     if(star.alive == true)
     {
         star.kill();
         score += 1;
-        console.log(score);
+        if(stars.countLiving()==0)
+        {
+            GD.scoreText.setText("All stars collected!");
+            starsCollected = true;
+            score = 0;
+            console.log(starsCollected);
+            return;
+        }
+        GD.scoreText.setText("Score: " + score);
     }
 }
-
