@@ -31,6 +31,8 @@ function create () {
     game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
+    GD.cameraX=((game.width-300)/2);
+    GD.cameraY=0;
 
     initAxes();
     initCurve();
@@ -145,8 +147,8 @@ function initHUD() {
     GD.hud.add(GD.levelText);
     GD.hud.add(GD.totalscoreText);
 
-    GD.hud.x=(game.width-100)/2;
-    GD.hud.x=(game.height-100)/2;
+    GD.hud.x=GD.cameraX;
+    GD.hud.y=GD.cameraY;
 
     game.camera.follow(GD.hud);
 }
@@ -203,7 +205,7 @@ function loadlevel(lvl)
 function updatePositionText(id,oldval,newval) {
     if(id=='playerX')GD.player.x = newval;
     if(id=='playerY')GD.player.y = newval;
-    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
+    GD.posText.setText("Position: (" + Math.floor(GD.player.x/GD.scale) + "," + -Math.ceil(GD.player.y/GD.scale) + ")");
     return newval;
 }
 
@@ -213,7 +215,7 @@ function updateScoreText(id,oldval,newval) {
 }
 
 function updateTotScoreText(id,oldval,newval) {
-    GD.totalscoreText.setText("Score: "+newval);
+    GD.totalscoreText.setText("Total Score: "+newval);
     return newval;
 }
 
@@ -254,6 +256,7 @@ function resetLevel() {
     GD.playerY = 0;
     GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
+    GD.curveBuff.clear();
 }
 
 function gameOver() {
