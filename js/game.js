@@ -113,11 +113,11 @@ function create () {
     makeAxes();
 
     // vars for drawing func
-    GD.fun = exampleFn;
+    //GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
     GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
-    GD.redraw = true;
+    GD.redraw = false;
 
     draw();
 }
@@ -126,23 +126,19 @@ function update() {
 	//update loop
 
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    
-    if (cursors.up.isDown)
+
+    if (GD.running)
     {
-        GD.player.y = GD.player.y - 10;
+        if (starsCollected)
+        {
+            GD.running = false;
+            alert("Level Complete");
+        }
+        GD.player.x += 1;
+        GD.player.y = -20*GD.fun(GD.player.x/20);
     }
-    if(cursors.down.isDown)
-    {
-        GD.player.y = GD.player.y + 10;
-    }
-    if(cursors.left.isDown)
-    {
-        GD.player.x = GD.player.x - 10;
-    }
-    if(cursors.right.isDown)
-    {
-        GD.player.x = GD.player.x + 10;
-    }
+
+
     stars.forEach(function(star) {
         if(collides(GD.player, star)) {
             collectStar(GD.player, star);
@@ -172,7 +168,7 @@ function collides (a, b) {
 function StartGame(){
 	//Grab text
     GD.fun = symToFn(textBox());
-    debugger;
+    //debugger;
     GD.redraw = true;
     GD.running = true;
 }
@@ -226,21 +222,12 @@ function makeRect(key, width, height) {
 
 //Parsing Functions
 function symToFn(string) {
+
     var exp = Parser.parse(string);
     return function(x) {
         return exp.evaluate({x:x});
     }
- 	// split polynomial on [+-]
-    // var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
 
-    // return function(x) {
-    //     var total = evalFactor(parts[0],x);
-    //     for(var i=1;i<total.length;i+=2) {
-    //     	if (parts[i]) total+=evalFactor(parts[i+1],x);
-    //         else total-=evalFactor(parts[i+1],x);
-    //     }
-    //     return total;
-    // }
 }
 
 function evalFactor(f,x) {
@@ -293,10 +280,10 @@ function draw(fn,canvas) {
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
     axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
-    axes.scale = 40;                 // 40 pixels from x=0 to x=1
+    axes.scale = 20;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
-    showAxes(ctx,axes);
+    //showAxes(ctx,axes);
     funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
 }
 
