@@ -27,7 +27,7 @@ function create () {
     //Add position
     GD.fun = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
         font: "20px Arial",
-        fill: "#ff0044",
+        fill: "red",
         align: "center"
     });
 
@@ -51,9 +51,12 @@ function create () {
     //test array will be replaced with results from JSON
     var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
     makeStarSprites(testArray);
+
+    //Create Axis
+    makeAxis();
 }
 
-function update(tpf) {
+function update() {
 	//update loop
 	GD.fun.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
 }
@@ -66,6 +69,33 @@ function StartGame(){
 
 function textBox() {
     return document.getElementById('inputbox').value
+}
+
+function makeAxis(){
+
+    //y
+    makeColoredRect('yAxis',5,600,105,105,105);
+    GD.yaxis=game.add.sprite(25,-300,game.cache.getBitmapData('yAxis'));
+    makeColoredRect('yTick',15,5,105,105,105);
+
+    //x
+    makeColoredRect('xAxis',850,5,105,105,105);
+    GD.xaxis=game.add.sprite(-200,25,game.cache.getBitmapData('xAxis'));
+    makeColoredRect('xTick',5,15,105,105,105);
+
+    plotTicks();
+
+}
+
+function plotTicks(){
+    for(var x=-155;x<=game.width;x+=20) {
+        GD.xtick=game.add.sprite(x,20,game.cache.getBitmapData('xTick'));
+    }
+    
+    for(var y=-315;y<=game.height;y+=20) {
+        GD.tick=game.add.sprite(20,y,game.cache.getBitmapData('yTick'));
+    }
+
 }
 
 // Utils
