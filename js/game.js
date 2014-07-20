@@ -98,25 +98,24 @@ function update() {
         if (starsCollected)
         {
             GD.running = false;
-            alert("Level Complete")
+            alert("Level Complete");
         }
-        GD.player.x += 1
-        GD.player.y = -GD.fun(GD.player.x/20)
+        GD.player.x += 1;
+        GD.player.y = -20*GD.fun(GD.player.x/20);
     }
 
 
     stars.forEach(function(star) {
-
-        if(collides(GD.player, star))
-            
-            {
+        if(collides(GD.player, star)) {
             collectStar(GD.player, star);
-            }   
+        }   
     })
 
 	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
     redrawPlot(GD.fun,GD.curveBuff);
 }
+
+//----------
 
 function collides (a, b) {
         if(a != undefined)
@@ -129,8 +128,6 @@ function collides (a, b) {
             );  
         }
 }  
-  
-//----------
 
 function StartGame(){
 	//Grab text
@@ -175,7 +172,6 @@ function plotTicks(){
 
 }
 
-// Utils
 function makeColoredRect(key, width, height, r, g, b) {
 	var rect = game.make.bitmapData(width,height,key,true);
 	rect.fill(r,g,b,1);
@@ -189,14 +185,6 @@ function makeRect(key, width, height) {
 }
 
 //Parsing Functions
-
-// ex:
-// s = textbox.getText();
-// f = symToFn(s);
-// for(int x=0;x<canvas.width;x++) {
-// 	canvas.drawPixel(x,f(x));
-// }
-
 function symToFn(string) {
 
     var exp = Parser.parse(string);
@@ -248,10 +236,10 @@ function draw(fn,canvas) {
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
     axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
-    axes.scale = 40;                 // 40 pixels from x=0 to x=1
+    axes.scale = 20;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
-    showAxes(ctx,axes);
+    //showAxes(ctx,axes);
     funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
 }
 
