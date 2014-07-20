@@ -13,6 +13,7 @@ function preload () {
 }
 
 function create () {
+
     game.stage.backgroundColor = 0x000053
     //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
@@ -47,13 +48,17 @@ function create () {
     //Stars
     makeRect('star', 25, 25);
     stars = game.add.group();
-    
+    jsonText = loadJSON('json/levels.json');
     //test array will be replaced with results from JSON
-    var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
-    makeStarSprites(testArray);
+
+    console.log(jsonText["level1"]);
+    makeStarSprites(jsonText["level1"]);
 
     //Create Axis
-    makeAxis();
+    makeAxes();
+
+    
+
 }
 
 function update() {
@@ -71,7 +76,7 @@ function textBox() {
     return document.getElementById('inputbox').value
 }
 
-function makeAxis(){
+function makeAxes(){
 
     //y
     makeColoredRect('yAxis',5,600,105,105,105);
@@ -173,9 +178,20 @@ function makeStarSprites(arr) {
 	}
 }
 
-function loadJSON(filename) {
-	// load filename
-   // var JSONtext = $.getJSON(filename);
-	// return  eval('(' + JSONtext + ')');
- //    debugger;
+function loadJSON(file) {
+    var request = new XMLHttpRequest();
+    request.open("GET", file, false);
+    request.send(null)
+    var res = JSON.parse(request.responseText);
+    return res;
+};
+
+function makeAxis() {
+    // make X axis
+
+    // make y axis
+}
+
+function redrawPlot() {
+
 }
