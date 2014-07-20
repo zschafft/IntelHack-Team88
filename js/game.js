@@ -106,36 +106,38 @@ function create () {
 }
 
 function update() {
-	//update loop
-
+	// update delorean position
     if (GD.running)
     {
-        if (GD.player.x >  game.width-100 ||
-            GD.player.y <= -game.height/2 ||
-            GD.player.y >=  game.height/2)
-        {
-            GD.running = false;
-            alert("Try Again");
-        }
         GD.player.x += 1;
         GD.player.y = -20*GD.fun(GD.player.x/20);
     }
 
-    if (GD.starsCollected)
-    {
-        GD.running = false;
-        alert("Level Complete");
-    }
+    GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
 
+    // collision check
     stars.forEach(function(star) {
         if(GD.player.overlap(star)) {
             collectStar(GD.player, star);
         }   
     })
 
-	GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
-    
-    redrawPlot(GD.fun,GD.curveBuff);
+    // check for level complete
+    if (GD.starsCollected)
+    {
+        GD.running = false;
+        alert("Level Complete");
+    }
+
+    // out of bounds check
+    if (GD.player.x >  game.width-100 ||
+        GD.player.y <= -game.height/2 ||
+        GD.player.y >=  game.height/2) 
+    {
+            GD.running = false;
+            alert("Try Again");
+    }
 }
 
 //----------
