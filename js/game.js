@@ -48,7 +48,7 @@ function create () {
     // vars for drawing func
     //GD.fun = exampleFn;
     GD.square = game.make.bitmapData(makeRect('square', 100, 100));
-    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
+    GD.curveBuff = game.make.bitmapData(1100,600,'curve',true);
     GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = false;
