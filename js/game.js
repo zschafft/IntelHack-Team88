@@ -55,6 +55,7 @@ function create () {
 function update() {
     if(GD.needReset) {
         resetLevel();
+        GD.needReset = false;
     }
 
 	// update delorean position
@@ -319,7 +320,6 @@ function loadJSON(file) {
     var res = JSON.parse(request.responseText);
     return res;
 }
-
 
 // Graphing
 function drawPlot(fn,bmd) {
