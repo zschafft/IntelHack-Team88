@@ -1,11 +1,14 @@
 var game;
 
 var GD = {
-    level:11,
+    level:1,
     score:0,
     totalscore:0,
-    starsCollected:false,
-    deltaCap:1/60
+    deltaCap:1/60,
+    isRunning:false,
+    speed:50,
+    playerX:0,playerY:0,
+    scale:20
 };
 
 window.onload = function() {
@@ -27,57 +30,48 @@ function preload () {
 function create () {
     game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
-
-    //make world bigger
     game.world.setBounds(-1000,-1000,2000,2000);
+
+    initAxes();
+    initCurve();
+    initLevelData();
+
+    loadlevel(GD.level);
+
+    // init Delorean
+    GD.player=game.add.sprite(0,0,'delorean');
+    GD.player.anchor.setTo(0.5,0.5);
 
     initHUD();
 
-    GD.running=false;
-
-    //Create Axis First
-    makeAxes();
-
-    //Stars
-    stars = game.add.group();
-    GD.ld = loadJSON('json/levels.json');
-    startLevel(GD.level);
-
-    //add cursors
-    cursors = game.input.keyboard.createCursorKeys();
-
-    // vars for drawing func
-    //GD.fun = exampleFn;
-    GD.square = game.make.bitmapData(makeRect('square', 100, 100));
-    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
-    GD.curveBuff.fill(0,0,0,0);
-    GD.redraw = false;
-
-    //Delorean
-    GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,.9);
+    GD.watch('playerX',updatePositionText);
+    GD.watch('playerY',updatePositionText);
+    GD.watch('score',updateScoreText);
+    GD.watch('totalscore',updateTotScoreText);
+    GD.watch('level',updateLevelText);
 }
 
 function update() {
-	// update delorean position and angle
-    if (GD.running)
-    {
+	// update delorean position
+    if (GD.isRunning)
+    {   
+        debugger;
         var oldX = GD.player.x;
         var oldY = GD.player.y;
-        GD.player.x += 1;
-        GD.player.y = -20*GD.fun(GD.player.x/20);
+        GD.playerX += (GD.speed * GD.deltaCap);
+        GD.playerY =  -GD.fun(GD.playerX);
         GD.player.angle = 100*(game.math.angleBetween(oldX, oldY, GD.player.x, GD.player.y)) * .58;
     }
 
-    GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
-    redrawPlot(GD.fun,GD.curveBuff);
+    // if we need to redraw, do it
+    if(GD.redraw) {
+        drawPlot(GD.fun,GD.curveBuff);
+    }
 
-    // collision check
-    stars.forEach(function(star) {
+    // collision check and see if we're done
+    GD.stars.forEach(function(star) {
         if(GD.player.overlap(star)) {
             collectStar(GD.player, star);
-            checkForWin();
         }
     });
 
@@ -89,20 +83,34 @@ function update() {
     //     GD.running = false;
     //     reset();
     // }
+
+    checkForWin();
 }
 
 //----------
+
+function initLevelData() {
+    GD.stars = game.add.group();
+    GD.ld = loadJSON('json/levels.json');
+}
+
+function initCurve() {
+    GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
+    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
+    GD.curveBuff.fill(0,0,0,0);
+    GD.redraw = false;
+}
 
 function initHUD() {
     // Make hud group
     GD.hud = game.add.group();
 
     // Add buttons
-    var resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=reset);
-    var startBut = game.add.button(x=(game.width+300)/2,y=(game.height-200)/2, key='startBut',callback=StartGame);
+    GD.resetBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=resetLevel);
+    GD.startBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=startTravel);
  
     //Add HUD
-    GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
+    GD.posText = game.add.text((game.width-600)/2, (game.width-300)/2, '', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -130,14 +138,12 @@ function initHUD() {
         align: "center"
     });
 
-    GD.hud.add(resetBut);
+    GD.hud.add(GD.resetBut);
+    GD.hud.add(GD.startBut);
     GD.hud.add(GD.posText);
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
     GD.hud.add(GD.totalscoreText);
-
-    GD.scoreText.setText("Score: 0");
-    GD.totalscoreText.setText("Total Score: 0");
 
     GD.hud.x=(game.width-100)/2;
     GD.hud.x=(game.height-100)/2;
@@ -145,19 +151,44 @@ function initHUD() {
     game.camera.follow(GD.hud);
 }
 
-function StartGame(){
+function updatePositionText(id,oldval,newval) {
+    if(id=='playerX')GD.player.x = newval;
+    if(id=='playerY')GD.player.y = newval;
+    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
+    return newval;
+}
+
+function updateScoreText(id,oldval,newval) {
+    GD.scoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateTotScoreText(id,oldval,newval) {
+    GD.totalscoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateLevelText(id,oldval,newval) {
+    GD.levelText.setText("Level: "+newval);
+    return newval;
+}
+
+function TWC(v) {
+    return v/20;
+}
+
+function startTravel(){
 	//Grab text
     GD.fun = symToFn(textBox());
-    //debugger;
     GD.redraw = true;
-    GD.running = true;
+    GD.isRunning = true;
 }
 
 function textBox() {
     return document.getElementById('inputbox').value
 }
 
-function makeAxes(){
+function initAxes(){
     //y
     makeColoredRect('yAxis',5,game.height,105,105,105);
     GD.yaxis=game.add.sprite(0,0,game.cache.getBitmapData('yAxis'));
@@ -212,7 +243,7 @@ function makeRandomColor() {
 function symToFn(string) {
     var exp = Parser.parse(string);
     return function(x) {
-        return exp.evaluate({x:x});
+        return GD.scale*exp.evaluate({x:x/GD.scale});
     }
 }
 
@@ -221,8 +252,9 @@ function evalFactor(f,x) {
 }
 
 function makeStarSprites(arr) {
+    GD.stars.removeAll(true); // remove anything in the group and destroy them
 	for (var i = 0; i < arr.length; i++) {
-        var star = stars.create(arr[i].x, arr[i].y, 'star');
+        var star = GD.stars.create(arr[i].x, arr[i].y, 'star');
         star.anchor.setTo(0.5, 0.5);
 	}
 }
@@ -235,24 +267,11 @@ function loadJSON(file) {
     return res;
 }
 
-function redrawPlot(fn,bmd) {
-    if(!GD.redraw) return;
-    GD.curveBuff.clear();
-    draw(fn,bmd.canvas);
-    GD.redraw = false;
-}
-
 function checkForWin() {
-    if(stars.countLiving()==0)
-    {
-        GD.scoreText.setText("All stars collected!");
-        GD.score = 0;
+    if(GD.stars.countLiving()==0) {
         GD.level++;
-        GD.curveBuff.clear();
-        GD.player.x=0;
-        GD.player.y=0;
-        GD.running=false;
-        if(!startLevel(GD.level)) gameOver();
+        if(!loadlevel(GD.level)) gameOver();
+        resetLevel();
     }
 }
 
@@ -262,8 +281,6 @@ function collectStar(player, star) {
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
-        GD.scoreText.setText("Score: " + GD.score);
-        GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
 }
 
@@ -272,18 +289,18 @@ function fun2(x) {return Math.cos(3*x);}
 function exampleFn(x) {return x;}
 function exampleFn2(x) {return x*x;}
 
-// Stolen code below
-
-function draw(fn,canvas) {
-    if (null==canvas || !canvas.getContext) return;
+function drawPlot(fn,bmd) {
+    bmd.clear();
+    var canvas = bmd.canvas;
 
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
     axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
-    axes.scale = 20;                 // 20 pixels from x=0 to x=1
+    axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
     funGraph(ctx,axes,fn,makeRandomColor(),3); 
+    GD.redraw = false;
 }
 
 function funGraph (ctx,axes,func,color,thick) {
@@ -333,46 +350,24 @@ function NamedRegExp(pattern, string) {
     return output;
 
 };
-function collectStar(player, star) {
-    if(star.alive == true)
-    {
-        star.kill();
-        GD.score += 1;
-        GD.totalscore +=1;
-        GD.scoreText.setText("Score: " + GD.score);
-        GD.totalscoreText.setText("Total Score: " + GD.totalscore);
-    }
-}
 
-function startLevel(lvl)
+function loadlevel(lvl)
 {
     var starArr = GD.ld['level'+lvl];
-    starsCollected = false;
-    GD.score = 0;
-    GD.scoreText.setText("Score: " + GD.score);
-    GD.totalscoreText.setText("Score: " + GD.totalscore);
-    GD.levelText.setText("Level " + GD.level);
-
-    if(starArr == null) return false;
-
+    if(starArr == null) return false; //no level data
     makeStarSprites(starArr);
+    GD.score = 0;
     return true;
 }
 
 function gameOver() {
-    alert("FUCK");
-    GD.level=1;
-    startLevel(GD.level);
-    reset();
+    alert("You did it. Aren't you proud?");
 }
 
-function reset() {
-    startLevel(GD.level);
-    GD.totalscore = GD.level * 5;
-    GD.totalscoreText.setText("Score: " + GD.totalscore);
-    GD.player.destroy();
-    GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,0.9);
-    GD.running = false;
-    GD.curveBuff.clear();
+function resetLevel() {
+    GD.isRunning = false;
+    GD.playerX = 0;
+    GD.playerY = 0;
+    GD.player.angle = 0;
+    GD.stars.callAllExists('revive',false);
 }
