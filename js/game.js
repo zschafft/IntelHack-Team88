@@ -135,7 +135,7 @@ function update() {
 
         if (GD.player.x/20 == game.width/20 - 5 || GD.player.y/20 == game.height/20 - 20)
         {
-            GD.running = false;
+            reset();
             alert("Try Again");
         }
         GD.player.x += 1;
@@ -363,8 +363,8 @@ function collectStar(player, star) {
             console.log(GD.starsCollected);
             startLevel(++GD.level);
             GD.player.destroy();
+            GD.curveBuff.clear();
             GD.player=game.add.sprite(0,0,'delorean');
-
             GD.player.anchor.setTo(0.5,0.5);
 
             GD.running=false;
@@ -378,7 +378,6 @@ function collectStar(player, star) {
 
 function startLevel(lvl)
 {
-
     var starArr = GD.ld['level'+lvl];
     starsCollected = false;
     GD.score = 0;
@@ -386,6 +385,14 @@ function startLevel(lvl)
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
     makeStarSprites(starArr);
+
+}
+
+function reset(){
+
+    startLevel(GD.level);
+    GD.running = false;
+    GD.curveBuff.clear();
 
 }
 
