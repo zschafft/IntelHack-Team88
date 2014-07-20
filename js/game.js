@@ -4,7 +4,7 @@ var GD = {
     level:1,
     score:0,
     totalscore:0,
-    deltaCap:1/60,
+    deltaCap:1/30,
     isRunning:false,
     speed:100,
     playerX:0,playerY:0,
