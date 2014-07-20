@@ -153,7 +153,6 @@ function loadJSON(file) {
     request.open("GET", file, false);
     request.send(null)
     var res = JSON.parse(request.responseText);
-    debugger;
     return res;
 };
 
