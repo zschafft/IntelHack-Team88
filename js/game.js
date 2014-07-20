@@ -26,15 +26,18 @@ function preload () {
     game.load.image('delorean', 'img/smalldelorean.png');
     game.load.image('resetBut', 'img/reset_button.png');
     game.load.image('background', 'img/lotsofstars.jpg');
+    game.load.audio('space', 'sounds/World-of-Automatons.mp3');
 }
 
 function create () {
     game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
+
     GD.cameraX=((game.width-300)/2);
     GD.cameraY=0;
 
+    initAudio();
     initAxes();
     initCurve();
     initLevelData();
@@ -44,6 +47,7 @@ function create () {
     // init Delorean
     GD.player=game.add.sprite(0,0,'delorean');
     GD.player.anchor.setTo(0.5,0.5);
+
 
     initHUD();
 
@@ -95,6 +99,11 @@ function update() {
 //----------
 
 // Init helpers
+function initAudio() {
+    backAudio = game.add.audio('space');
+    backAudio.play("",0,1,true,true);
+}
+
 function initWatches() {
     GD.watch('playerX',updatePositionText);
     GD.watch('playerY',updatePositionText);
@@ -150,6 +159,7 @@ function initHUD() {
         fill: "white",
         align: "left"
     });
+
 
     GD.levelText = game.add.text(30, -270, '', {
         font: "24px Helvetica",
