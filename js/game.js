@@ -107,7 +107,6 @@ function create () {
 
 function update() {
 	//update loop
-	GD.posText.setText("Position: (" + Math.ceil(GD.player.x) + "," + -Math.ceil(GD.player.y) + ")");
 
     if (GD.running)
     {
@@ -280,6 +279,8 @@ function fun1(x) {return Math.sin(x);}
 function fun2(x) {return Math.cos(3*x);}
 function exampleFn(x) {return x;}
 function exampleFn2(x) {return x*x;}
+
+// Stolen code below
 
 function draw(fn,canvas) {
     if (null==canvas || !canvas.getContext) return;
