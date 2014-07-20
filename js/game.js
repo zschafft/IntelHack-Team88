@@ -21,10 +21,11 @@ function preload () {
     game.load.image('star', 'img/star.png');
     game.load.image('delorean', 'img/smalldelorean.png');
     game.load.image('resetBut', 'img/reset_button.png');
+    game.load.image('background', 'img/lotsofstars.jpg');
 }
 
 function create () {
-    game.stage.backgroundColor = makeRandomColor();
+    game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
 
     //make world bigger
@@ -199,8 +200,11 @@ function makeRect(key, width, height) {
 }
 
 function makeRandomColor() {
-    console.log(Phaser.Color.getRandomColor(0, 255));
-    return Phaser.Color.getRandomColor(0, 75);
+    var r = game.rnd.between(175,255);
+    var b = game.rnd.between(175,255);
+    var g = game.rnd.between(175,255);
+    var colorString = "rgb(" + r + "," + g + "," + b +")";
+    return colorString;
 }
 
 //Parsing Functions
@@ -278,7 +282,7 @@ function draw(fn,canvas) {
     axes.scale = 20;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
-    funGraph(ctx,axes,fn,"rgb(11,153,11)",3); 
+    funGraph(ctx,axes,fn,makeRandomColor(),3); 
 }
 
 function funGraph (ctx,axes,func,color,thick) {
