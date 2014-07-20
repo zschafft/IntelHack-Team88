@@ -34,6 +34,9 @@ function create () {
 
     GD.running=false;
 
+    //Create Axis First
+    makeAxes();
+
     //Stars
     stars = game.add.group();
     GD.ld = loadJSON('json/levels.json');
@@ -41,9 +44,6 @@ function create () {
 
     //add cursors
     cursors = game.input.keyboard.createCursorKeys();
-
-    //Create Axis
-    makeAxes();
 
     // vars for drawing func
     //GD.fun = exampleFn;
@@ -234,6 +234,7 @@ function checkForWin() {
         GD.scoreText.setText("All stars collected!");
         GD.score = 0;
         GD.level++;
+        GD.curveBuff.clear();
         GD.player.x=0;
         GD.player.y=0;
         GD.running=false;
@@ -351,7 +352,7 @@ function gameOver() {
 
 function reset() {
     startLevel(GD.level);
-    GD.totalscore = GD.level - 1 * 5;
+    GD.totalscore = GD.level * 5;
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.player.destroy();
     GD.player=game.add.sprite(0,0,'delorean');
