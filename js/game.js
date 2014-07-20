@@ -75,13 +75,6 @@ function update() {
         }
     });
 
-    // check for level complete
-    if (GD.starsCollected)
-    {
-        GD.running = false;
-        alert("Level Complete");
-    }
-
     // out of bounds check
     if (GD.player.x >  game.width-100 ||
         GD.player.y <= -game.height/2 ||
