@@ -6,7 +6,7 @@ var GD = {
     totalscore:0,
     deltaCap:1/60,
     isRunning:false,
-    speed:50,
+    speed:100,
     playerX:0,playerY:0,
     scale:20
 };
@@ -54,8 +54,7 @@ function create () {
 function update() {
 	// update delorean position
     if (GD.isRunning)
-    {   
-        debugger;
+    {
         var oldX = GD.player.x;
         var oldY = GD.player.y;
         GD.playerX += (GD.speed * GD.deltaCap);
@@ -88,6 +87,8 @@ function update() {
 }
 
 //----------
+
+// Init helpers
 
 function initLevelData() {
     GD.stars = game.add.group();
@@ -151,43 +152,6 @@ function initHUD() {
     game.camera.follow(GD.hud);
 }
 
-function updatePositionText(id,oldval,newval) {
-    if(id=='playerX')GD.player.x = newval;
-    if(id=='playerY')GD.player.y = newval;
-    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
-    return newval;
-}
-
-function updateScoreText(id,oldval,newval) {
-    GD.scoreText.setText("Score: "+newval);
-    return newval;
-}
-
-function updateTotScoreText(id,oldval,newval) {
-    GD.totalscoreText.setText("Score: "+newval);
-    return newval;
-}
-
-function updateLevelText(id,oldval,newval) {
-    GD.levelText.setText("Level: "+newval);
-    return newval;
-}
-
-function TWC(v) {
-    return v/20;
-}
-
-function startTravel(){
-	//Grab text
-    GD.fun = symToFn(textBox());
-    GD.redraw = true;
-    GD.isRunning = true;
-}
-
-function textBox() {
-    return document.getElementById('inputbox').value
-}
-
 function initAxes(){
     //y
     makeColoredRect('yAxis',5,game.height,105,105,105);
@@ -219,6 +183,89 @@ function plotTicks(){
     }
 }
 
+function makeStarSprites(arr) {
+    GD.stars.removeAll(true); // remove anything in the group and destroy them
+    for (var i = 0; i < arr.length; i++) {
+        var star = GD.stars.create(arr[i].x, arr[i].y, 'star');
+        star.anchor.setTo(0.5, 0.5);
+    }
+}
+
+function loadlevel(lvl)
+{
+    var starArr = GD.ld['level'+lvl];
+    if(starArr == null) return false; //no level data
+    makeStarSprites(starArr);
+    GD.score = 0;
+    return true;
+}
+
+// Textbox Callbacks
+function updatePositionText(id,oldval,newval) {
+    if(id=='playerX')GD.player.x = newval;
+    if(id=='playerY')GD.player.y = newval;
+    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
+    return newval;
+}
+
+function updateScoreText(id,oldval,newval) {
+    GD.scoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateTotScoreText(id,oldval,newval) {
+    GD.totalscoreText.setText("Score: "+newval);
+    return newval;
+}
+
+function updateLevelText(id,oldval,newval) {
+    GD.levelText.setText("Level: "+newval);
+    return newval;
+}
+
+// Game events
+function startTravel(){
+    //Grab text
+    GD.fun = symToFn(textBox());
+    GD.redraw = true;
+    GD.isRunning = true;
+}
+
+
+function checkForWin() {
+    if(GD.stars.countLiving()==0) {
+        GD.level++;
+        if(!loadlevel(GD.level)) gameOver();
+        resetLevel();
+    }
+}
+
+function collectStar(player, star) {
+    if(star.alive == true)
+    {
+        star.kill();
+        GD.score += 1;
+        GD.totalscore +=1;
+    }
+}
+
+function resetLevel() {
+    GD.isRunning = false;
+    GD.playerX = 0;
+    GD.playerY = 0;
+    GD.player.angle = 0;
+    GD.stars.callAllExists('revive',false);
+}
+
+function gameOver() {
+    alert("You did it. Aren't you proud?");
+}
+
+// Utils
+function textBox() {
+    return document.getElementById('inputbox').value
+}
+
 function makeColoredRect(key, width, height, r, g, b) {
 	var rect = game.make.bitmapData(width,height,key,true);
 	rect.fill(r,g,b,1);
@@ -239,24 +286,11 @@ function makeRandomColor() {
     return colorString;
 }
 
-//Parsing Functions
 function symToFn(string) {
     var exp = Parser.parse(string);
     return function(x) {
         return GD.scale*exp.evaluate({x:x/GD.scale});
     }
-}
-
-function evalFactor(f,x) {
- 	return f.c*Math.pow(x,f.e);
-}
-
-function makeStarSprites(arr) {
-    GD.stars.removeAll(true); // remove anything in the group and destroy them
-	for (var i = 0; i < arr.length; i++) {
-        var star = GD.stars.create(arr[i].x, arr[i].y, 'star');
-        star.anchor.setTo(0.5, 0.5);
-	}
 }
 
 function loadJSON(file) {
@@ -267,28 +301,8 @@ function loadJSON(file) {
     return res;
 }
 
-function checkForWin() {
-    if(GD.stars.countLiving()==0) {
-        GD.level++;
-        if(!loadlevel(GD.level)) gameOver();
-        resetLevel();
-    }
-}
 
-function collectStar(player, star) {
-    if(star.alive == true)
-    {
-        star.kill();
-        GD.score += 1;
-        GD.totalscore +=1;
-    }
-}
-
-function fun1(x) {return Math.sin(x);}
-function fun2(x) {return Math.cos(3*x);}
-function exampleFn(x) {return x;}
-function exampleFn2(x) {return x*x;}
-
+// Graphing
 function drawPlot(fn,bmd) {
     bmd.clear();
     var canvas = bmd.canvas;
@@ -319,55 +333,7 @@ function funGraph (ctx,axes,func,color,thick) {
     ctx.stroke();
 }
 
-function NamedRegExp(pattern, string) {
-    pattern=pattern.toString();
-    var result = [];
-    var groupRX = /\(\<(.*?)\>\s(.*?)\)/;
-    while (groupRX.test(pattern)) {
-        var match = groupRX.exec(pattern);
-        result.push({
-            name : match[1],
-            pattern : match[2],
-            value : null
-        });
-        pattern = pattern.replace(groupRX, '('+match[2]+')');
-    }
-
-    var finalMatch=(new RegExp(pattern)).exec(string);
-    if(finalMatch) {
-        for ( var i=0, len=result.length; i<len; i++) {
-            if(finalMatch[(i+1)]!==false) {
-                result[i].value=finalMatch[(i+1)];
-            }
-        }
-    }
-
-    var output = {};
-
-    for(var i = 0;i<result.length;i++) {
-        output[result[i].name]=result[i].value;
-    }
-    return output;
-
-};
-
-function loadlevel(lvl)
-{
-    var starArr = GD.ld['level'+lvl];
-    if(starArr == null) return false; //no level data
-    makeStarSprites(starArr);
-    GD.score = 0;
-    return true;
-}
-
-function gameOver() {
-    alert("You did it. Aren't you proud?");
-}
-
-function resetLevel() {
-    GD.isRunning = false;
-    GD.playerX = 0;
-    GD.playerY = 0;
-    GD.player.angle = 0;
-    GD.stars.callAllExists('revive',false);
-}
+function fun1(x) {return Math.sin(x);}
+function fun2(x) {return Math.cos(3*x);}
+function exampleFn(x) {return x;}
+function exampleFn2(x) {return x*x;}
