@@ -93,11 +93,11 @@ function makeAxes(){
 }
 
 function plotTicks(){
-    for(var x=-155;x<=game.width;x+=20) {
+    for(var x=-150;x<=game.width;x+=25) {
         GD.xtick=game.add.sprite(x,20,game.cache.getBitmapData('xTick'));
     }
     
-    for(var y=-315;y<=game.height;y+=20) {
+    for(var y=-300;y<=game.height;y+=25) {
         GD.tick=game.add.sprite(20,y,game.cache.getBitmapData('yTick'));
     }
 
