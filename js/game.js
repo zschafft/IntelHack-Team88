@@ -13,7 +13,7 @@ var GD = {
 };
 
 window.onload = function() {
-    game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
+    game = new Phaser.Game(800, 600, Phaser.WEBGL, '', { preload: preload,
     													create: create,
     													update: update });
 };
@@ -27,6 +27,9 @@ function preload () {
     game.load.image('resetBut', 'img/reset_button.png');
     game.load.image('background', 'img/lotsofstars.jpg');
     game.load.audio('space', 'sounds/World-of-Automatons.mp3');
+    game.load.audio('starsound', 'sounds/powerUp7.mp3');
+    game.load.audio('levelup', 'sounds/lowThreeTone.mp3');
+    // game.load.script('filter', 'js/Fire.js');
 }
 
 function create () {
@@ -48,6 +51,13 @@ function create () {
     GD.player=game.add.sprite(0,0,'delorean');
     GD.player.anchor.setTo(0.5,0.5);
 
+    // GD.filter = game.add.filter('Fire',800,600);
+    // GD.filter.alpha = 0.0;
+    // GD.fire= game.add.sprite(0,0);
+    // GD.fire.anchor.setTo(0.5,0.5);
+    // GD.fire.width = GD.player.width;
+    // GD.fire.height= GD.player.height;
+    // GD.fire.filters = [GD.filter];
 
     initHUD();
 
@@ -57,6 +67,7 @@ function create () {
 }
 
 function update() {
+    // GD.filter.update();
 	// update delorean position
     if (GD.isRunning)
     {
@@ -102,6 +113,8 @@ function update() {
 function initAudio() {
     backAudio = game.add.audio('space');
     backAudio.play("",0,1,true,true);
+    starsound = game.add.audio('starsound');
+    levelupsound = game.add.audio('levelup');
 }
 
 function initWatches() {
@@ -111,11 +124,11 @@ function initWatches() {
     GD.watch('totalscore',updateTotScoreText);
     GD.watch('level',updateLevelText);
 
-    GD.playerX = 0;
-    GD.playerY = 0;
-    GD.score = 0;
-    GD.totalscore = 0;
-    GD.level = 1;
+    updatePositionText('playerX',GD.playerX,GD.playerX);
+    updatePositionText('playerY',GD.playerY,GD.playerY);
+    updateScoreText('score',GD.score,GD.score);
+    updateTotScoreText('totalscore',GD.totalscore,GD.totalscore);
+    updateLevelText('level',GD.level,GD.level);
 }
 
 function initLevelData() {
@@ -141,6 +154,12 @@ function initHUD() {
  
     //Add HUD
     GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
+        font: "20px Helvetica",
+        fill: "white",
+        align: "center"
+    });
+
+    game.add.text(445, 176, 'f(x)=', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -223,6 +242,11 @@ function makeStarSprites(arr) {
 
 function loadlevel(lvl)
 {
+    backAudio.pause();
+    levelupsound.volume = 2;
+    levelupsound.play();
+    backAudio.play();
+    if(lvl==12) debugger;
     var starArr = GD.ld['level'+lvl];
     if(starArr == null) return false; //no level data
     makeStarSprites(starArr);
@@ -266,6 +290,7 @@ function startTravel(){
 function checkForWin() {
     if(GD.stars.countLiving()==0) {
         GD.level++;
+        debugger;
         if(!loadlevel(GD.level)) gameOver();
         resetLevel();
     }
@@ -274,6 +299,7 @@ function checkForWin() {
 function collectStar(player, star) {
     if(star.alive == true)
     {
+        starsound.play();
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
@@ -343,7 +369,7 @@ function drawPlot(fn,bmd) {
 
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.y0 = canvas.height/2+25;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
