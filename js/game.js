@@ -16,11 +16,11 @@ window.onload = function() {
 
 // Game Callbacks -----
 function preload () {
-    game.load.image('start','img/start_button.png');
-    game.load.image('stop', 'img/reset.png');
+    game.load.image('startBut', 'img/start_button.png');
+    game.load.image('stop', 'img/reset_button.png');
     game.load.image('star', 'img/star.png');
     game.load.image('delorean', 'img/delorean.png');
-    game.load.image('reset', 'img/reset_button.png');
+    game.load.image('resetBut', 'img/reset_button.png');
 }
 
 function create () {
@@ -32,41 +32,40 @@ function create () {
 
     // Make hud group
     GD.hud = game.add.group();
-    var button = game.add.button(x=''+(game.width-400)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
 
-  	//Add reset button
-    var reset_Butt = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='reset',callback=reset);
+    // Add buttons
+    var startBut = game.add.button(x=(game.width-400)/2,y=(game.height-200)/2, key='resetBut',callback=reset);
+    var resetBut = game.add.button(x=(game.width-200)/2,y=(game.height-200)/2, key='startBut',callback=StartGame);
  
-    //Add position
-    GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
+    //Add HUD
+    GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
     });
 
-    GD.scoreText = game.add.text(''+(game.width-300)/2, ''+(-270), 'Score: ', {
+    GD.scoreText = game.add.text((game.width-300)/2, -270, 'Score: ', {
         font: "20px Helvetica",
         style: "bold",
         fill: "white",
         align: "left"
     });
 
-    GD.totalscoreText = game.add.text(''+(game.width-300)/2, ''+(-230), 'Total Score: ', {
+    GD.totalscoreText = game.add.text((game.width-300)/2, -230, 'Total Score: ', {
         font: "20px Helvetica",
         style: "bold",
         fill: "white",
         align: "left"
     });
 
-    GD.levelText = game.add.text(''+(30), ''+(-270), '', {
+    GD.levelText = game.add.text(30, -270, '', {
         font: "24px Helvetica",
         style: "bold",
         fill: "white",
         align: "center"
     });
 
-    GD.hud.add(button);
-    GD.hud.add(reset_Butt);
+    GD.hud.add(resetBut);
     GD.hud.add(GD.posText);
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
@@ -107,7 +106,6 @@ function create () {
 
 function update() {
 	//update loop
-
 	GD.posText.setText("Position: (" + Math.ceil(GD.player.x) + "," + -Math.ceil(GD.player.y) + ")");
 
     if (GD.running)
@@ -333,6 +331,7 @@ function NamedRegExp(pattern, string) {
         output[result[i].name]=result[i].value;
     }
     return output;
+
 };
 function collectStar(player, star) {
     if(star.alive == true)
@@ -380,3 +379,4 @@ function reset(){
     GD.curveBuff.clear();
 
 }
+
