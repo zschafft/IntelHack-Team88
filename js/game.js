@@ -122,6 +122,7 @@ function initHUD() {
         align: "left"
     });
 
+
     GD.levelText = game.add.text(30, -270, '', {
         font: "24px Helvetica",
         style: "bold",
