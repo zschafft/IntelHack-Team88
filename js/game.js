@@ -21,8 +21,10 @@ window.onload = function() {
 // Game Callbacks -----
 function preload () {
     game.load.image('start','img/start_button.png');
+    game.load.image('stop', 'img/reset.png');
     game.load.image('star', 'img/star.png');
     game.load.image('delorean', 'img/delorean.png');
+    game.load.image('reset', 'img/reset_button.png');
 }
 
 function create () {
@@ -34,9 +36,10 @@ function create () {
 
     // Make hud group
     GD.hud = game.add.group();
+    var button = game.add.button(x=''+(game.width-400)/2,y=''+(game.height-200)/2, key='reset',callback=reset);
 
-  	//Add button
-    var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
+  	//Add reset button
+    var reset = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
  
     //Add position
     GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
@@ -67,6 +70,7 @@ function create () {
     });
 
     GD.hud.add(button);
+    GD.hud.add(reset);
     GD.hud.add(GD.posText);
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
