@@ -53,11 +53,6 @@ function create () {
 }
 
 function update() {
-    if(GD.needReset) {
-        resetLevel();
-        GD.needReset = false;
-    }
-
 	// update delorean position
     if (GD.isRunning)
     {
@@ -90,6 +85,11 @@ function update() {
     // }
 
     checkForWin();
+
+    if(GD.needReset) {
+        resetLevel();
+        GD.needReset = false;
+    }
 }
 
 //----------
@@ -274,6 +274,8 @@ function resetLevel() {
     GD.playerY = 0;
     GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
+    GD.totalscore -= GD.score;
+    GD.score = 0;
     GD.curveBuff.clear();
 }
 
