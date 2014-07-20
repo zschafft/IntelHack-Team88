@@ -364,6 +364,13 @@ function collectStar(player, star) {
             GD.score = 0;
             console.log(GD.starsCollected);
             startLevel(++GD.level);
+            GD.player.destroy();
+            GD.player=game.add.sprite(0,0,'delorean');
+
+            GD.player.anchor.setTo(0.5,0.5);
+
+            GD.running=false;
+
             return;
         }
         GD.scoreText.setText("Score: " + GD.score);
@@ -383,4 +390,6 @@ function startLevel(lvl)
     makeStarSprites(starArr);
 
 }
+
+
 
