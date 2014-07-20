@@ -99,7 +99,8 @@ function initLevelData() {
 
 function initCurve() {
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite.anchor.setTo(0.5,0.5);
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = false;
 }
@@ -146,6 +147,7 @@ function initHUD() {
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
     GD.hud.add(GD.totalscoreText);
+    GD.hud.add(GD.curveSprite);
 
     GD.hud.x=GD.cameraX;
     GD.hud.y=GD.cameraY;
@@ -310,8 +312,8 @@ function drawPlot(fn,bmd) {
     var canvas = bmd.canvas;
 
     var axes={}, ctx=canvas.getContext("2d");
-    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
