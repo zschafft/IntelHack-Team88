@@ -1,9 +1,16 @@
 var game;
-var score = 0;
+
 var GD = {
+    level:1,
+    score:0,
+    starsCollected:false,
     deltaCap:1/60
 };
+
+var score = 0;
+
 var starsCollected = false;
+
 
 window.onload = function() {
     game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
@@ -44,9 +51,17 @@ function create () {
         align: "center"
     });
 
+    GD.levelText = game.add.text(''+(30), ''+(-270), '', {
+        font: "24px Helvetica",
+        style: "bold",
+        fill: "white",
+        align: "center"
+    });
+
     GD.hud.add(button);
     GD.hud.add(GD.posText);
     GD.hud.add(GD.scoreText);
+    GD.hud.add(GD.levelText);
 
 
     GD.scoreText.setText("Score: 0");
@@ -68,10 +83,19 @@ function create () {
 
     //Stars
     stars = game.add.group();
-    jsonText = loadJSON('json/levels.json');
-    makeStarSprites(jsonText["level1"]);
-    starsCollected = false;
+    GD.ld = loadJSON('json/levels.json');
+    startLevel(GD.level);
 
+
+    //iterates and generates sprites for the next level to be started
+/*    for(var level = 0; level < levelArray.size; level++)
+    {
+        if(level = false)
+        makeStarSprites(jsonText["level" + (i+1)]);
+    }
+    
+    starsCollected = false;
+*/
     //add cursors
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -118,13 +142,15 @@ function update() {
 //----------
 
 function collides (a, b) {
+
         if(a != undefined)
         {
+
             return !(
-                ((a.y + a.height) < (b.y)) ||
-                (a.y > (b.y + b.height)) ||
-                ((a.x + a.width) < b.x) ||
-                (a.x > (b.x + b.width))
+                ((a.y + a.height +5) < (b.y)) ||
+                (a.y -5> (b.y + b.height) ) ||
+                ((a.x + a.width) +5  < b.x) ||
+                (a.x -5 > (b.x + b.width))
             );  
         }
 }  
@@ -199,6 +225,13 @@ function evalFactor(f,x) {
 }
 
 function makeStarSprites(arr) {
+    if(typeof arr == "undefined")
+    {
+        console.log("You're a winner!");
+        GD.scoreText.setText("You win!!!!");
+        GD.levelText.setText("You win!!!!");
+        return;
+    }
 	 for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, 'star');
        // star.events.onKilled.add(function() { score += 10; console.log(score);}, this);
@@ -305,15 +338,29 @@ function collectStar(player, star) {
     if(star.alive == true)
     {
         star.kill();
-        score += 1;
+        GD.score += 1;
         if(stars.countLiving()==0)
         {
             GD.scoreText.setText("All stars collected!");
-            starsCollected = true;
-            score = 0;
-            console.log(starsCollected);
+            GD.starsCollected = true;
+            GD.score = 0;
+            console.log(GD.starsCollected);
+            startLevel(++GD.level);
             return;
         }
-        GD.scoreText.setText("Score: " + score);
+        GD.scoreText.setText("Score: " + GD.score);
     }
 }
+
+function startLevel(lvl)
+{
+
+    var starArr = GD.ld['level'+lvl];
+    starsCollected = false;
+    GD.score = 0;
+    GD.scoreText.setText("Score: " + GD.score);
+    GD.levelText.setText("Level " + GD.level);
+    makeStarSprites(starArr);
+
+}
+
