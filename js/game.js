@@ -269,7 +269,6 @@ function collectStar(player, star) {
 }
 
 function resetLevel() {
-    GD.curveBuff.clear();
     GD.isRunning = false;
     GD.playerX = 0;
     GD.playerY = 0;
