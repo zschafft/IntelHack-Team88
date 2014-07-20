@@ -340,7 +340,7 @@ function drawPlot(fn,bmd) {
 
     var axes={}, ctx=canvas.getContext("2d");
     axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.y0 = canvas.height/2+25;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
