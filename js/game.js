@@ -125,7 +125,6 @@ function update() {
         alert("Level Complete");
     }
 
-
     stars.forEach(function(star) {
         if(GD.player.overlap(star)) {
             collectStar(GD.player, star);
