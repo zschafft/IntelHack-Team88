@@ -42,17 +42,21 @@ function create () {
     //Delorean
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
+
     GD.player.anchor.setTo(0.5,0.5);
+
     GD.running=false;
 
     //Stars
     makeRect('star', 25, 25);
     stars = game.add.group();
-    jsonText = loadJSON('json/levels.json');
+    GD.ld = loadJSON('json/levels.json');
     //test array will be replaced with results from JSON
 
-    console.log(jsonText["level1"]);
-    makeStarSprites(jsonText["level1"]);
+    cursors = game.input.keyboard.createCursorKeys();
+
+    //Add axis
+    makeStarSprites(GD.ld["level1"]);
 
     //Create Axis
     makeAxes();
@@ -60,21 +64,68 @@ function create () {
     // vars for drawing func
     GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = true;
+
+    draw();
 }
 
 function update() {
 	//update loop
+
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+    if (cursors.up.isDown)
+    {
+        GD.player.y = GD.player.y - 10;
+    }
+    if(cursors.down.isDown)
+    {
+        GD.player.y = GD.player.y + 10;
+    }
+    if(cursors.left.isDown)
+    {
+        GD.player.x = GD.player.x - 10;
+    }
+    if(cursors.right.isDown)
+    {
+        GD.player.x = GD.player.x + 10;
+    }
+    stars.forEach(function(star) {
+
+        if(collides(GD.player, star))
+            
+            {
+        console.log('collision!');
+            }   
+    })
+
+	GD.posText.setText("Position: (" + GD.player.x/20 + "," + GD.player.y/20 + ")");
+    redrawPlot(GD.fun,GD.curveBuff);
 }
+
+function collides (a, b) 
+    {
+       
+        if(a != undefined)
+        {
+            return !(
+                ((a.y + a.height) < (b.y)) ||
+                (a.y > (b.y + b.height)) ||
+                ((a.x + a.width) < b.x) ||
+                (a.x > (b.x + b.width))
+            );  
+        }
+}  
+  
 //----------
 
 function StartGame(){
 	//Grab text
-    GD.fun = exampleFn2;
+    GD.fun = symToFn(textBox());
+    debugger;
     GD.redraw = true;
+    GD.running = true;
 }
 
 function textBox() {
@@ -136,11 +187,12 @@ function makeRect(key, width, height) {
 
 function symToFn(string) {
  	//  split polynomial on [+-]
- 	var parts = string.match("\\d*x\\^\\d*");
-
+    // var re = new RegExp("\\d*x\\^\\d*");
+    var parts = [NamedRegExp("(<c> \\d*)x\\^(<e> \\d*)",string)];
+    debugger;
  	return function(x) {
 		var total = evalFactor(parts[0],x);
- 		for(var i=1;i<total.size();i+=2) {
+ 		for(var i=1;i<total.length;i+=2) {
  			if (parts[i]) total+=evalFactor(parts[i+1],x);
 			else total-=evalFactor(parts[i+1],x);
  		}
@@ -166,6 +218,15 @@ function loadJSON(file) {
     return res;
 }
 
+function redrawPlot(fn,bmd) {
+    if(!GD.redraw) return;
+    GD.curveBuff.fill(0,0,0,0);
+    draw(fn,bmd.canvas);
+    GD.redraw = false;
+}
+
+function fun1(x) {return Math.sin(x);  }
+function fun2(x) {return Math.cos(3*x);}
 function exampleFn(x) {
     return x;
 }
@@ -174,12 +235,73 @@ function exampleFn2(x) {
     return x*x;
 }
 
-function redrawPlot(fn,bmd) {
-    if(!GD.redraw) return;
-    debugger;
-    GD.curveBuff.fill(0,0,0,0);
-    for(var x=0;x<bmd.width;x++) {
-        GD.curveBuff.setPixel(x,Math.floor(fn(x/10)),0,0,0,1,true);  
-    }
-    GD.redraw = false;
+function draw(fn,canvas) {
+    if (null==canvas || !canvas.getContext) return;
+
+    var axes={}, ctx=canvas.getContext("2d");
+    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.scale = 40;                 // 40 pixels from x=0 to x=1
+    axes.doNegativeX = true;
+
+    showAxes(ctx,axes);
+    funGraph(ctx,axes,fn,"rgb(11,153,11)",1); 
 }
+
+function funGraph (ctx,axes,func,color,thick) {
+    var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+    var iMax = Math.round((ctx.canvas.width-x0)/dx);
+    var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+    ctx.beginPath();
+    ctx.lineWidth = thick;
+    ctx.strokeStyle = color;
+
+    for (var i=iMin;i<=iMax;i++) {
+    xx = dx*i; yy = scale*func(xx/scale);
+    if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
+    else         ctx.lineTo(x0+xx,y0-yy);
+    }
+    ctx.stroke();
+}
+
+function showAxes(ctx,axes) {
+    var x0=axes.x0, w=ctx.canvas.width;
+    var y0=axes.y0, h=ctx.canvas.height;
+    var xmin = axes.doNegativeX ? 0 : x0;
+    ctx.beginPath();
+    ctx.strokeStyle = "rgb(128,128,128)"; 
+    ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
+    ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
+    ctx.stroke();
+}
+
+function NamedRegExp(pattern, string) {
+    pattern=pattern.toString();
+    var result = [];
+    var groupRX = /\(\<(.*?)\>\s(.*?)\)/;
+    while (groupRX.test(pattern)) {
+        var match = groupRX.exec(pattern);
+        result.push({
+            name : match[1],
+            pattern : match[2],
+            value : null
+        });
+        pattern = pattern.replace(groupRX, '('+match[2]+')');
+    }
+
+    var finalMatch=(new RegExp(pattern)).exec(string);
+    if(finalMatch) {
+        for ( var i=0, len=result.length; i<len; i++) {
+            if(finalMatch[(i+1)]!==false) {
+                result[i].value=finalMatch[(i+1)];
+            }
+        }
+    }
+
+    var output = {};
+
+    for(var i = 0;i<result.length;i++) {
+        output[result[i].name]=result[i].value;
+    }
+    return output;
+};
