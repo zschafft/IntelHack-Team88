@@ -279,6 +279,7 @@ function collectStar(player, star) {
         GD.totalscore +=1;
         if(stars.countLiving()==0)
         {
+
             GD.scoreText.setText("All stars collected!");
             GD.starsCollected = true;
             GD.score = 0;
@@ -416,6 +417,11 @@ function startLevel(lvl)
 function reset(){
 
     startLevel(GD.level);
+    GD.totalscore = GD.level * 5;
+    GD.totalscoreText.setText("Score: " + GD.totalscore);
+    GD.player.destroy();
+    GD.player=game.add.sprite(0,0,'delorean');
+    GD.player.anchor.setTo(0.5,0.5);
     GD.running = false;
     GD.curveBuff.clear();
 
