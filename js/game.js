@@ -24,7 +24,7 @@ function preload () {
 }
 
 function create () {
-    game.stage.backgroundColor = 0x000053
+    game.stage.backgroundColor = makeRandomColor();
     game.time.deltaCap=GD.deltaCap;
 
     //make world bigger
@@ -196,6 +196,11 @@ function makeRect(key, width, height) {
 	var b = game.rnd.between(0,255);
 	var g = game.rnd.between(0,255);
 	return makeColoredRect(key, width, height, r,g,b);
+}
+
+function makeRandomColor() {
+    console.log(Phaser.Color.getRandomColor(0, 255));
+    return Phaser.Color.getRandomColor(0, 75);
 }
 
 //Parsing Functions
