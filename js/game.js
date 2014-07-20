@@ -28,7 +28,7 @@ function create () {
     //Add position
     GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
         font: "20px Arial",
-        fill: "#ff0044",
+        fill: "red",
         align: "center"
     });
 
@@ -43,6 +43,7 @@ function create () {
     //Delorean
     makeRect('delorean',50,50);
     GD.player=game.add.sprite(0,0,game.cache.getBitmapData('delorean'));
+    GD.player.anchor.setTo(0.5,0.5);
     GD.running=false;
 
     //Stars
@@ -50,10 +51,14 @@ function create () {
     stars = game.add.group();
     jsonText = loadJSON('json/levels.json');
     //test array will be replaced with results from JSON
+
     console.log(jsonText["level1"]);
     makeStarSprites(jsonText["level1"]);
 
-    //Add axis
+    //Create Axis
+    makeAxes();
+
+    
 
 
     // vars for drawing func
@@ -64,7 +69,7 @@ function create () {
     GD.redraw = true;
 }
 
-function update(tpf) {
+function update() {
 	//update loop
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
     redrawPlot(GD.fun,GD.curveBuff);
@@ -80,6 +85,38 @@ function StartGame(){
 
 function textBox() {
     return document.getElementById('inputbox').value
+}
+
+function makeAxes(){
+
+    //y
+    makeColoredRect('yAxis',5,600,105,105,105);
+    GD.yaxis=game.add.sprite(0,0,game.cache.getBitmapData('yAxis'));
+    GD.yaxis.anchor.setTo(0.5,0.5);
+    makeColoredRect('yTick',15,5,105,105,105);
+
+    //x
+    makeColoredRect('xAxis',850,5,105,105,105);
+    GD.xaxis=game.add.sprite(0,0,game.cache.getBitmapData('xAxis'));
+    GD.xaxis.anchor.setTo(0.5,0.5);
+    makeColoredRect('xTick',5,15,105,105,105);
+
+    plotTicks();
+
+}
+
+function plotTicks(){
+    var tick;
+    for(var x=-155;x<=game.width;x+=20) {
+        tick = game.add.sprite(x,0,game.cache.getBitmapData('xTick'));
+        tick.anchor.setTo(0.5,0.5);
+    }
+    
+    for(var y=-315;y<=game.height;y+=20) {
+        tick =game.add.sprite(0,y,game.cache.getBitmapData('yTick'));
+        tick.anchor.setTo(0.5,0.5);
+    }
+
 }
 
 // Utils
