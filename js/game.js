@@ -13,7 +13,6 @@ function preload () {
 }
 
 function create () {
-    loadJSON('json/levels.json');
 
     game.stage.backgroundColor = 0x000053
     //make world bigger
@@ -49,10 +48,10 @@ function create () {
     //Stars
     makeRect('star', 25, 25);
     stars = game.add.group();
-    
+    jsonText = loadJSON('json/levels.json');
     //test array will be replaced with results from JSON
-    var testArray = [{x:100,y:150},{x:50,y:200},{x:200,y:70},{x:500,y:500}];
-    makeStarSprites(testArray);
+    console.log(jsonText["level1"]);
+    makeStarSprites(jsonText["level1"]);
 
     //Add axis
 
@@ -153,7 +152,6 @@ function loadJSON(file) {
     request.open("GET", file, false);
     request.send(null)
     var res = JSON.parse(request.responseText);
-    debugger;
     return res;
 };
 
