@@ -147,19 +147,18 @@ function initHUD() {
 
 function update() {
 	//update loop
-	GD.posText.setText("Position: (" + Math.ceil(GD.player.x) + "," + -Math.ceil(GD.player.y) + ")");
-
     if (GD.running)
     {
-        if (GD.player.x >  game.width-100 ||
-            GD.player.y <= -game.height/2 ||
-            GD.player.y >=  game.height/2)
-        {
-            reset();
-            alert("Try Again");
-        }
         GD.player.x += 1;
         GD.player.y = -20*GD.fun(GD.player.x/20);
+    }
+
+    if (GD.player.x >  game.width-100 ||
+        GD.player.y <= -game.height/2 ||
+        GD.player.y >=  game.height/2)
+    {
+        reset();
+        alert("Try Again");
     }
 
     stars.forEach(function(star) {
@@ -410,14 +409,10 @@ function startLevel(lvl)
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
     makeStarSprites(starArr);
-
 }
 
-function reset(){
-
+function reset() {
     startLevel(GD.level);
     GD.running = false;
     GD.curveBuff.clear();
-
 }
-
