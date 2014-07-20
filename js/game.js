@@ -74,22 +74,30 @@ function update() {
 	//update loop
 
 	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
-    if (cursors.up.isDown)
+    // if (cursors.up.isDown)
+    // {
+    //     GD.player.y = GD.player.y - 10;
+    // }
+    // if(cursors.down.isDown)
+    // {
+    //     GD.player.y = GD.player.y + 10;
+    // }
+    // if(cursors.left.isDown)
+    // {
+    //     GD.player.x = GD.player.x - 10;
+    // }
+    // if(cursors.right.isDown)
+    // {
+    //     GD.player.x = GD.player.x + 10;
+    // }
+
+    if (GD.running)
     {
-        GD.player.y = GD.player.y + 10;
+        GD.running = false;
+        GD.y = evalFactor(GD.fun,GD.x)
     }
-    if(cursors.down.isDown)
-    {
-        GD.player.y = GD.player.y - 10;
-    }
-    if(cursors.left.isDown)
-    {
-        GD.player.x = GD.player.x - 10;
-    }
-    if(cursors.right.isDown)
-    {
-        GD.player.x = GD.player.x + 10;
-    }
+
+
     stars.forEach(function(star) {
 
         if(collides(GD.player, star))
@@ -99,8 +107,10 @@ function update() {
             }   
     })
 
-	GD.posText.setText("Position: (" + GD.player.x + "," + GD.player.y + ")");
+	GD.posText.setText("Position: (" + GD.player.x + "," + -GD.player.y + ")");
     // redrawPlot(GD.fun,GD.curveBuff);
+
+
 
 }
 
@@ -127,6 +137,7 @@ function StartGame(){
     debugger;
     GD.fun = exampleFn2;
     GD.redraw = true;
+    GD.running = true;
 }
 
 function textBox() {
