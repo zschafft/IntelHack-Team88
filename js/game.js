@@ -31,6 +31,8 @@ function create () {
     game.add.tileSprite(-150, -285, 800, 600, 'background')
     game.time.deltaCap=GD.deltaCap;
     game.world.setBounds(-1000,-1000,2000,2000);
+    GD.cameraX=((game.width-300)/2);
+    GD.cameraY=0;
 
     initAxes();
     initCurve();
@@ -43,6 +45,8 @@ function create () {
     GD.player.anchor.setTo(0.5,0.5);
 
     initHUD();
+    
+    GD.player.bringToTop();
 
     GD.watch('playerX',updatePositionText);
     GD.watch('playerY',updatePositionText);
@@ -97,7 +101,8 @@ function initLevelData() {
 
 function initCurve() {
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
-    GD.curveSprite = game.add.sprite(-game.width/2,-game.height/2,game.cache.getBitmapData('curve'));
+    GD.curveSprite = game.add.sprite(0,0,game.cache.getBitmapData('curve'));
+    GD.curveSprite.anchor.setTo(0.5,0.5);
     GD.curveBuff.fill(0,0,0,0);
     GD.redraw = false;
 }
@@ -144,9 +149,10 @@ function initHUD() {
     GD.hud.add(GD.scoreText);
     GD.hud.add(GD.levelText);
     GD.hud.add(GD.totalscoreText);
+    GD.hud.add(GD.curveSprite);
 
-    GD.hud.x=(game.width-100)/2;
-    GD.hud.x=(game.height-100)/2;
+    GD.hud.x=GD.cameraX;
+    GD.hud.y=GD.cameraY;
 
     game.camera.follow(GD.hud);
 }
@@ -203,7 +209,7 @@ function loadlevel(lvl)
 function updatePositionText(id,oldval,newval) {
     if(id=='playerX')GD.player.x = newval;
     if(id=='playerY')GD.player.y = newval;
-    GD.posText.setText("Position: (" + Math.floor(GD.player.x) + "," + -Math.floor(GD.player.y) + ")");
+    GD.posText.setText("Position: (" + Math.floor(GD.player.x/GD.scale) + "," + -Math.ceil(GD.player.y/GD.scale) + ")");
     return newval;
 }
 
@@ -213,7 +219,7 @@ function updateScoreText(id,oldval,newval) {
 }
 
 function updateTotScoreText(id,oldval,newval) {
-    GD.totalscoreText.setText("Score: "+newval);
+    GD.totalscoreText.setText("Total Score: "+newval);
     return newval;
 }
 
@@ -255,6 +261,7 @@ function resetLevel() {
     GD.playerY = 0;
     GD.player.angle = 0;
     GD.stars.callAllExists('revive',false);
+    GD.curveBuff.clear();
 }
 
 function gameOver() {
@@ -308,8 +315,8 @@ function drawPlot(fn,bmd) {
     var canvas = bmd.canvas;
 
     var axes={}, ctx=canvas.getContext("2d");
-    axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
-    axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+    axes.x0 = canvas.width/5-10;//.5 + .5*canvas.width;  // x0 pixels from left to x=0
+    axes.y0 = canvas.height/2;//.5 + .5*canvas.height; // y0 pixels from top to y=0
     axes.scale = 1;                 // 20 pixels from x=0 to x=1
     axes.doNegativeX = true;
 
