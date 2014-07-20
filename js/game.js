@@ -96,10 +96,6 @@ function create () {
     //Create Axis
     makeAxes();
 
-    //Delorean
-    GD.player=game.add.sprite(0,0,'delorean');
-    GD.player.anchor.setTo(0.5,0.5);
-
     // vars for drawing func
     //GD.fun = exampleFn;
     GD.curveBuff = game.make.bitmapData(800,600,'curve',true);
@@ -148,17 +144,14 @@ function update() {
 //----------
 
 function collides (a, b) {
-
-        if(a != undefined)
-        {
-
-            return !(
-                ((a.y + a.height) - 3 < (b.y)) ||
-                (a.y  > (b.y + b.height) ) ||
-                ((a.x + a.width) - 20 <  b.x) ||
-                (a.x - 8 > (b.x + b.width))
-            );  
-        }
+    if(a != undefined) {
+        return !(
+            ((a.y + a.height) - 3 < (b.y)) ||
+            (a.y  > (b.y + b.height) ) ||
+            ((a.x + a.width) - 20 <  b.x) ||
+            (a.x - 8 > (b.x + b.width))
+        );  
+    }
 }  
 
 function StartGame(){
