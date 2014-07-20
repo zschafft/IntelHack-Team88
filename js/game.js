@@ -1,6 +1,7 @@
 var game;
 var score = 0;
 var GD = {};
+var starsCollected = false;
 
 window.onload = function() {
     game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload,
@@ -25,16 +26,29 @@ function create () {
 
   	//Add button
     var button = game.add.button(x=''+(game.width-200)/2,y=''+(game.height-200)/2, key='start',callback=StartGame);
-
+ 
     //Add position
     GD.posText = game.add.text(''+(game.width-300)/2, ''+(game.width-300)/2, '', {
-        font: "20px Arial",
-        fill: "red",
+        font: "20px Helvetica",
+        fill: "white",
+        align: "center"
+    });
+
+    GD.scoreText = game.add.text(''+(game.width-300)/2, ''+(-270), 'Score: ', {
+        font: "20px Helvetica",
+        style: "bold",
+        fill: "white",
         align: "center"
     });
 
     GD.hud.add(button);
     GD.hud.add(GD.posText);
+    GD.hud.add(GD.scoreText);
+
+
+    GD.scoreText.setText("Score: 0");
+
+
 
     GD.hud.x=(game.width-100)/2;
     GD.hud.x=(game.height-100)/2;
@@ -53,6 +67,7 @@ function create () {
     stars = game.add.group();
     jsonText = loadJSON('json/levels.json');
     makeStarSprites(jsonText["level1"]);
+    starsCollected = false;
 
     //add cursors
     cursors = game.input.keyboard.createCursorKeys();
@@ -311,6 +326,14 @@ function collectStar(player, star) {
     {
         star.kill();
         score += 1;
-        console.log(score);
+        if(stars.countLiving()==0)
+        {
+            GD.scoreText.setText("All stars collected!");
+            starsCollected = true;
+            score = 0;
+            console.log(starsCollected);
+            return;
+        }
+        GD.scoreText.setText("Score: " + score);
     }
 }
