@@ -72,15 +72,9 @@ function update() {
     stars.forEach(function(star) {
         if(GD.player.overlap(star)) {
             collectStar(GD.player, star);
+            checkForWin();
         }
     });
-
-    // check for level complete
-    if (GD.starsCollected)
-    {
-        GD.running = false;
-        alert("Level Complete");
-    }
 
     // out of bounds check
     if (GD.player.x >  game.width-100 ||
@@ -88,7 +82,7 @@ function update() {
         GD.player.y >=  game.height/2) 
     {
         GD.running = false;
-        alert("Try Again");
+        reset();
     }
 }
 
@@ -144,35 +138,6 @@ function initHUD() {
 
     game.camera.follow(GD.hud);
 }
-
-function update() {
-	//update loop
-    if (GD.running)
-    {
-        GD.player.x += 1;
-        GD.player.y = -20*GD.fun(GD.player.x/20);
-    }
-
-    if (GD.player.x >  game.width-100 ||
-        GD.player.y <= -game.height/2 ||
-        GD.player.y >=  game.height/2)
-    {
-        reset();
-        alert("Try Again");
-    }
-
-    stars.forEach(function(star) {
-        if(GD.player.overlap(star)) {
-            collectStar(GD.player, star);
-        }   
-    })
-
-	GD.posText.setText("Position: (" + Math.ceil(GD.player.x/20) + "," + -Math.ceil(GD.player.y/20) + ")");
-    
-    redrawPlot(GD.fun,GD.curveBuff);
-}
-
-//----------
 
 function StartGame(){
 	//Grab text
@@ -242,14 +207,7 @@ function evalFactor(f,x) {
 }
 
 function makeStarSprites(arr) {
-    if(typeof arr == "undefined")
-    {
-        console.log("You're a winner!");
-        GD.scoreText.setText("You win!!!!");
-        GD.levelText.setText("You win!!!!");
-        return;
-    }
-	 for (var i = 0; i < arr.length; i++) {
+	for (var i = 0; i < arr.length; i++) {
         var star = stars.create(arr[i].x, arr[i].y, 'star');
         star.anchor.setTo(0.5, 0.5);
 	}
@@ -270,28 +228,26 @@ function redrawPlot(fn,bmd) {
     GD.redraw = false;
 }
 
+function checkForWin() {
+    if(stars.countLiving()==0)
+    {
+        GD.scoreText.setText("All stars collected!");
+        GD.score = 0;
+        GD.level++;
+        startLevel(GD.level);
+        GD.player.x=0;
+        GD.player.y=0;
+        GD.running=false;
+    }
+}
+
 function collectStar(player, star) {
     if(star.alive == true)
     {
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
-        if(stars.countLiving()==0)
-        {
-            GD.scoreText.setText("All stars collected!");
-            GD.starsCollected = true;
-            GD.score = 0;
-            console.log(GD.starsCollected);
-            GD.level = GD.level + 1;
-            startLevel(GD.level);
-            GD.player.destroy();
-            GD.player=game.add.sprite(0,0,'delorean');
-            GD.player.anchor.setTo(0.5,0.5);
-
-            GD.running=false;
-
-            return;
-        }
+        
         GD.scoreText.setText("Score: " + GD.score);
         GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
@@ -379,22 +335,6 @@ function collectStar(player, star) {
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
-        if(stars.countLiving()==0)
-        {
-            GD.scoreText.setText("All stars collected!");
-            GD.starsCollected = true;
-            GD.score = 0;
-            console.log(GD.starsCollected);
-            startLevel(++GD.level);
-            GD.player.destroy();
-            GD.curveBuff.clear();
-            GD.player=game.add.sprite(0,0,'delorean');
-            GD.player.anchor.setTo(0.5,0.5);
-
-            GD.running=false;
-
-            return;
-        }
         GD.scoreText.setText("Score: " + GD.score);
         GD.totalscoreText.setText("Total Score: " + GD.totalscore);
     }
@@ -403,12 +343,19 @@ function collectStar(player, star) {
 function startLevel(lvl)
 {
     var starArr = GD.ld['level'+lvl];
+    if(starArr == null) gameOver();
     starsCollected = false;
     GD.score = 0;
     GD.scoreText.setText("Score: " + GD.score);
     GD.totalscoreText.setText("Score: " + GD.totalscore);
     GD.levelText.setText("Level " + GD.level);
     makeStarSprites(starArr);
+}
+
+function gameOver() {
+    alert("FUCK");
+    GD.level=1;
+    startLevel(GD.level);
 }
 
 function reset() {
