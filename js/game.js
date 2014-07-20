@@ -108,7 +108,9 @@ function update() {
 
     if (GD.running)
     {
-        if (GD.player.x > game.width-100 || GD.player.y <= -game.height/2 || GD.player.y >= game.height/2)
+        if (GD.player.x >  game.width-100 ||
+            GD.player.y <= -game.height/2 ||
+            GD.player.y >=  game.height/2)
         {
             GD.running = false;
             alert("Try Again");
@@ -125,7 +127,7 @@ function update() {
 
 
     stars.forEach(function(star) {
-        if(collides(GD.player, star)) {
+        if(GD.player.overlap(star)) {
             collectStar(GD.player, star);
         }   
     })
@@ -136,17 +138,6 @@ function update() {
 }
 
 //----------
-
-function collides (a, b) {
-    if(a != undefined) {
-        return !(
-            ((a.y + a.height) - 40< (b.y)) ||
-            (a.y  + 5 > (b.y + b.height) ) ||
-            ((a.x + a.width) - 20 <  b.x) ||
-            (a.x - 8 > (b.x + b.width))
-        );  
-    }
-}  
 
 function StartGame(){
 	//Grab text
