@@ -27,6 +27,7 @@ function preload () {
     game.load.image('resetBut', 'img/reset_button.png');
     game.load.image('background', 'img/lotsofstars.jpg');
     game.load.audio('space', 'sounds/World-of-Automatons.mp3');
+    game.load.audio('starsound', 'sounds/powerUp7.mp3');
 }
 
 function create () {
@@ -102,6 +103,7 @@ function update() {
 function initAudio() {
     backAudio = game.add.audio('space');
     backAudio.play("",0,1,true,true);
+    starsound = game.add.audio('starsound');
 }
 
 function initWatches() {
@@ -141,6 +143,12 @@ function initHUD() {
  
     //Add HUD
     GD.posText = game.add.text((game.width-300)/2, (game.width-300)/2, '', {
+        font: "20px Helvetica",
+        fill: "white",
+        align: "center"
+    });
+
+    game.add.text(445, 176, 'f(x)=', {
         font: "20px Helvetica",
         fill: "white",
         align: "center"
@@ -272,6 +280,7 @@ function checkForWin() {
 function collectStar(player, star) {
     if(star.alive == true)
     {
+        starsound.play();
         star.kill();
         GD.score += 1;
         GD.totalscore +=1;
